@@ -1,0 +1,175 @@
+.visitor-card-scene {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.visitor-card-stage {
+  position: relative;
+  width: 100%;
+  /* Bleed past the page gutter so the pile reads as a table of cards wider than
+     the column of text above it. */
+  height: min(58vh, 540px);
+  min-height: 340px;
+  touch-action: none;
+}
+
+.visitor-card-canvas-host {
+  position: absolute;
+  inset: 0;
+}
+
+.visitor-card-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.visitor-card-details {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px 10px 18px;
+  max-width: calc(100% - 32px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: rgba(13, 13, 13, 0.82);
+  backdrop-filter: blur(10px);
+  white-space: nowrap;
+}
+
+.visitor-card-details-number {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-accent);
+}
+
+.visitor-card-details-name {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+}
+
+.visitor-card-details-date {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.visitor-card-details-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.visitor-card-details-btn:hover {
+  border-color: var(--color-accent-pink);
+  color: var(--color-text);
+}
+
+.visitor-card-details-btn--close {
+  padding: 6px 10px;
+}
+
+.visitor-card-details-btn--close:hover {
+  border-color: var(--color-accent);
+}
+
+.visitor-card-hint {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* Screen-reader-only text index of the same cards drawn on the canvas. */
+.visitor-card-index {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.visitor-card-index-item button:focus-visible {
+  position: static;
+  width: auto;
+  height: auto;
+}
+
+@media (max-width: 640px) {
+  .visitor-card-stage {
+    height: min(52vh, 420px);
+  }
+
+  .visitor-card-details {
+    gap: 10px;
+    padding: 8px 10px 8px 14px;
+  }
+
+  .visitor-card-details-date {
+    display: none;
+  }
+}
+
+.visitor-card-details-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.visitor-card-fallback {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.visitor-card-fallback li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.visitor-card-fallback img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.visitor-card-fallback button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.visitor-card-fallback button:hover {
+  border-color: var(--color-accent-pink);
+  color: var(--color-text);
+}

@@ -1,0 +1,68 @@
+.postit {
+  width: 280px;
+  padding: 24px;
+  background: var(--color-postit-bg);
+  color: var(--color-postit-ink);
+  border-radius: 4px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+  transform: rotate(-2deg);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.postit-message,
+.postit-contact {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--color-postit-ink);
+  font-family: var(--font-body);
+  resize: none;
+}
+
+.postit-message {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+/* Ink navy, not the site's lavender accent: the ring sits on yellow paper, where
+   lavender is far too light to register. Navy on #fbefa0 clears the 3:1 the focus
+   indicator needs with room to spare. */
+.postit-message:focus-visible,
+.postit-contact:focus-visible {
+  outline: 2px solid var(--color-postit-ink);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.postit-contact {
+  font-size: 0.85rem;
+  border-bottom: 1px solid rgba(31, 42, 68, 0.3);
+  padding-bottom: 6px;
+}
+
+.postit-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.postit-submit {
+  border: none;
+  background: var(--color-postit-ink);
+  color: var(--color-postit-bg);
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.postit-submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.postit-note {
+  font-size: 0.7rem;
+  color: rgba(31, 42, 68, 0.65);
+}

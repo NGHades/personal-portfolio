@@ -1,0 +1,88 @@
+/* The site's opening section — hero and bio in one, so it gets hero spacing
+   rather than the default .section rhythm. dvh, not vh: mobile browser chrome
+   makes 100vh taller than the visible viewport. */
+.about-me {
+  display: flex;
+  gap: 64px;
+  flex-wrap: wrap;
+  align-items: center;
+  min-height: 72dvh;
+  padding-top: 120px;
+}
+
+.about-me-copy {
+  flex: 1 1 420px;
+  max-width: 560px;
+}
+
+.about-me-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  margin-bottom: 24px;
+}
+
+.about-me-eyebrow {
+  color: var(--color-text-muted);
+  margin-bottom: 12px;
+}
+
+.about-me-headline {
+  font-size: clamp(2.25rem, 5vw, 3.25rem);
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+
+/* The one-line "who I am" statement: bolder and a step up in size from body copy,
+   so it reads as a second headline rather than a first paragraph. */
+.about-me-tagline {
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  font-weight: 700;
+  line-height: 1.5;
+  max-width: 34ch;
+  margin-bottom: 16px;
+}
+
+.about-me-body {
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.about-me-photo-block {
+  flex: 1 1 300px;
+  max-width: 360px;
+  position: relative;
+}
+
+.about-me-caption {
+  color: var(--color-accent);
+  margin-bottom: 12px;
+  display: block;
+}
+
+.about-me-photo {
+  transform: rotate(2deg);
+}
+
+.about-me-confetti {
+  position: absolute;
+  bottom: -36px;
+  right: -20px;
+}
+
+@media (max-width: 640px) {
+  .about-me {
+    gap: 40px;
+    min-height: 0;
+    padding-top: 96px;
+  }
+
+  /* Stacked, the photo block runs nearly to the gutter — pull the confetti's
+     overhang back inside so it isn't kissing the screen edge. */
+  .about-me-confetti {
+    right: 0;
+    bottom: -28px;
+  }
+}

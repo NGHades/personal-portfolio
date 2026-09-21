@@ -1,0 +1,61 @@
+.drawing-canvas-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.drawing-canvas {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.drawing-canvas-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.drawing-btn {
+  padding: 10px 22px;
+  border-radius: var(--radius-pill);
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-secondary);
+  transition: border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+}
+
+.drawing-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.drawing-btn--primary {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #0d0d0d;
+  font-weight: 600;
+}
+
+.drawing-btn--ghost:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+.drawing-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.drawing-result-name {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--color-accent);
+}

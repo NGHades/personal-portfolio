@@ -1,0 +1,61 @@
+@import "./styles/tokens.css";
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Graph-paper dot grid over the near-black base. `transparent 0` (rather than a
+   second length) keeps each dot's edge hard, so it stays a crisp point instead of a
+   blurry smudge on high-DPI screens. */
+body {
+  background-color: var(--color-bg);
+  background-image: radial-gradient(circle at 1px 1px, var(--color-dot-grid) 1px, transparent 0);
+  background-size: var(--dot-grid-size) var(--dot-grid-size);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+}
+
+.page {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 var(--page-gutter);
+}
+
+.section {
+  padding: 96px 0;
+  scroll-margin-top: 100px;
+}
+
+.italic-accent {
+  font-style: italic;
+}

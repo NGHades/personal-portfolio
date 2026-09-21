@@ -1,0 +1,51 @@
+.visitor-gallery {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 64px;
+  text-align: center;
+}
+
+.visitor-gallery-intro {
+  max-width: 520px;
+}
+
+.visitor-gallery-heading {
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  margin-bottom: 16px;
+}
+
+.visitor-gallery-sub {
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.visitor-gallery-sub code {
+  font-family: var(--font-mono);
+  color: var(--color-accent);
+}
+
+.visitor-gallery-browse {
+  width: 100%;
+  text-align: left;
+}
+
+.visitor-gallery-browse-heading {
+  font-size: 1.5rem;
+  margin-bottom: 24px;
+}
+
+.visitor-gallery-scene-fallback {
+  display: grid;
+  place-items: center;
+  height: min(58vh, 540px);
+  min-height: 340px;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+  .visitor-gallery-scene-fallback {
+    height: min(52vh, 420px);
+  }
+}
