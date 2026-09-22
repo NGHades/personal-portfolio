@@ -19,10 +19,11 @@ const PROJECTS = [
   },
   {
     name: "Frogodoro",
-    description: "TODO: one-line description.",
-    tags: [] as string[],
-    githubUrl: "https://github.com/",
-    liveUrl: undefined as string | undefined,
+    description:
+      "A frog-themed Pomodoro timer with lo-fi music, animated scenes, and Firebase-synced stats.",
+    tags: ["React", "Vite", "Tailwind CSS", "Firebase"],
+    githubUrl: "https://github.com/NGHades/frogodoro",
+    liveUrl: "https://frogodoro-alpha.vercel.app/" as string | undefined,
   },
 ];
 

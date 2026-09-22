@@ -77,8 +77,8 @@ function wave(x: number, yFrom: number, yTo: number, amp: number, phase: number,
 }
 
 /* ------------------------------------------------------------------ *
- * Mock drawings — nouns are all from SKETCH_CATEGORIES, adjectives from
- * FUN_ADJECTIVES, so the names read like real sketch-oracle output.
+ * Mock drawings — nouns are all from sketch-oracle's classes.txt vocabulary,
+ * adjectives from FUN_ADJECTIVES, so the names read like real sketch-oracle output.
  * ------------------------------------------------------------------ */
 
 const CAT: Stroke[] = [

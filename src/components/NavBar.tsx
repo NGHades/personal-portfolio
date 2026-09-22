@@ -19,7 +19,9 @@ export function NavBar() {
     <header className="navbar-wrap">
       <nav className="navbar">
         <a href="#about" className="navbar-mark" aria-label="Back to top">
-          RN
+          {/* alt="" on purpose: the link already carries the accessible name, so a
+              described image would just make screen readers announce it twice. */}
+          <img src="/panda-frog.svg" alt="" className="navbar-mark-logo" />
         </a>
         <ul className="navbar-links">
           {LINKS.map((link) => (

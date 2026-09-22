@@ -17,13 +17,20 @@
   border: none;
   background: transparent;
   color: var(--color-postit-ink);
-  font-family: var(--font-body);
+  font-family: var(--font-hand);
   resize: none;
 }
 
 .postit-message {
-  font-size: 1rem;
-  line-height: 1.4;
+  font-size: 1.4rem;
+  line-height: 1.35;
+}
+
+/* The placeholder is a prompt, not ink someone left — fade it so a half-written
+   note never reads as competing with it. */
+.postit-message::placeholder,
+.postit-contact::placeholder {
+  color: rgba(31, 42, 68, 0.45);
 }
 
 /* Ink navy, not the site's lavender accent: the ring sits on yellow paper, where
@@ -37,7 +44,7 @@
 }
 
 .postit-contact {
-  font-size: 0.85rem;
+  font-size: 1.1rem;
   border-bottom: 1px solid rgba(31, 42, 68, 0.3);
   padding-bottom: 6px;
 }
@@ -53,7 +60,9 @@
   color: var(--color-postit-bg);
   padding: 8px 18px;
   border-radius: var(--radius-pill);
-  font-size: 0.85rem;
+  font-family: var(--font-hand);
+  font-size: 1.05rem;
+  font-weight: 700;
   cursor: pointer;
 }
 
@@ -62,7 +71,17 @@
   cursor: default;
 }
 
+/* Validation sits on the paper in the same hand as everything else, so a failed
+   send reads as a note back rather than as chrome bolted onto the note. */
+.postit-error {
+  font-family: var(--font-hand);
+  font-size: 1rem;
+  line-height: 1.2;
+  color: var(--color-postit-error);
+}
+
 .postit-note {
-  font-size: 0.7rem;
+  font-family: var(--font-hand);
+  font-size: 0.95rem;
   color: rgba(31, 42, 68, 0.65);
 }

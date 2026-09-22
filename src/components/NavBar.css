@@ -21,10 +21,22 @@
 }
 
 .navbar-mark {
-  font-family: var(--font-display);
-  font-weight: 700;
+  display: flex;
   text-decoration: none;
   color: var(--color-text);
+  transition: opacity 0.15s ease;
+}
+
+.navbar-mark:hover {
+  opacity: 0.75;
+}
+
+/* The art is portrait inside a square viewBox, so a square box here centers it with
+   even air on both sides and keeps the pill from growing much past the type. */
+.navbar-mark-logo {
+  width: 32px;
+  height: 32px;
+  display: block;
 }
 
 .navbar-links {

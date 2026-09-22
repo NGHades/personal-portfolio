@@ -1,20 +1,21 @@
 import { useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
-import { SKETCH_CATEGORIES } from "../data/sketchCategories";
 import { FUN_ADJECTIVES } from "../data/funAdjectives";
 import type { Point, Stroke } from "../data/visitorCards";
+import { classifySketch } from "../lib/sketchOracle";
 import "./DrawingCanvas.css";
 
 type GuessState =
   | { status: "drawing" }
+  | { status: "guessing" }
   | { status: "guessed"; drawingName: string }
-  | { status: "submitted"; drawingName: string };
+  | { status: "submitted"; drawingName: string }
+  | { status: "error"; message: string };
 
 const CANVAS_SIZE = 320;
 
-// TODO: replace with sketch-oracle running client-side via WASM TFLite (docs/adr/0001).
-// Currently picks a random category from the real vocabulary to mock a guess.
-function mockGuess(): string {
-  const noun = SKETCH_CATEGORIES[Math.floor(Math.random() * SKETCH_CATEGORIES.length)];
+/** sketch-oracle's top guess, paired with a random adjective, e.g. "Generous Zebra". */
+async function guessDrawingName(strokes: Stroke[]): Promise<string> {
+  const [{ label: noun }] = await classifySketch(strokes, 1);
   const adjective = FUN_ADJECTIVES[Math.floor(Math.random() * FUN_ADJECTIVES.length)];
   return `${adjective} ${noun[0].toUpperCase()}${noun.slice(1)}`;
 }
@@ -90,9 +91,16 @@ export function DrawingCanvas({ onSubmit }: DrawingCanvasProps) {
     setState({ status: "drawing" });
   };
 
-  const handleGuess = () => {
+  const handleGuess = async () => {
     if (!hasDrawing) return;
-    setState({ status: "guessed", drawingName: mockGuess() });
+    setState({ status: "guessing" });
+    try {
+      const drawingName = await guessDrawingName(normalize(strokesRef.current));
+      setState({ status: "guessed", drawingName });
+    } catch (err) {
+      console.error("sketch-oracle inference failed", err);
+      setState({ status: "error", message: "Couldn't guess that one — try again?" });
+    }
   };
 
   const handleSubmit = async () => {
@@ -128,6 +136,10 @@ export function DrawingCanvas({ onSubmit }: DrawingCanvasProps) {
           </>
         )}
 
+        {state.status === "guessing" && (
+          <p className="drawing-result-name">Thinking…</p>
+        )}
+
         {state.status === "guessed" && (
           <div className="drawing-result">
             <p className="drawing-result-name">{state.drawingName}</p>
@@ -139,6 +151,15 @@ export function DrawingCanvas({ onSubmit }: DrawingCanvasProps) {
                 Add to gallery
               </button>
             </div>
+          </div>
+        )}
+
+        {state.status === "error" && (
+          <div className="drawing-result">
+            <p className="drawing-result-name">{state.message}</p>
+            <button className="drawing-btn drawing-btn--ghost" onClick={clearCanvas}>
+              Draw again
+            </button>
           </div>
         )}
 

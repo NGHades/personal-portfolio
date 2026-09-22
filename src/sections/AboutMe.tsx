@@ -1,5 +1,3 @@
-import { ImagePlaceholder } from "../components/ImagePlaceholder";
-import { ConfettiCluster } from "../components/ConfettiCluster";
 import "./AboutMe.css";
 
 export default function AboutMe() {
@@ -15,12 +13,6 @@ export default function AboutMe() {
         <p className="about-me-body">
           Based in Orange County, CA. {/* TODO: fill in the rest of the bio */}
         </p>
-      </div>
-
-      <div className="about-me-photo-block">
-        <p className="about-me-caption italic-accent">it's a pleasure to meet you!</p>
-        <ImagePlaceholder label="About Me photo" aspectRatio="4 / 5" className="about-me-photo" />
-        <ConfettiCluster className="about-me-confetti" />
       </div>
     </section>
   );

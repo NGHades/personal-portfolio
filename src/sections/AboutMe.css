@@ -50,39 +50,10 @@
   line-height: 1.6;
 }
 
-.about-me-photo-block {
-  flex: 1 1 300px;
-  max-width: 360px;
-  position: relative;
-}
-
-.about-me-caption {
-  color: var(--color-accent);
-  margin-bottom: 12px;
-  display: block;
-}
-
-.about-me-photo {
-  transform: rotate(2deg);
-}
-
-.about-me-confetti {
-  position: absolute;
-  bottom: -36px;
-  right: -20px;
-}
-
 @media (max-width: 640px) {
   .about-me {
     gap: 40px;
     min-height: 0;
     padding-top: 96px;
-  }
-
-  /* Stacked, the photo block runs nearly to the gutter — pull the confetti's
-     overhang back inside so it isn't kissing the screen edge. */
-  .about-me-confetti {
-    right: 0;
-    bottom: -28px;
   }
 }
