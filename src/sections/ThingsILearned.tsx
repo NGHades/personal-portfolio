@@ -35,6 +35,7 @@ const WEEKS: Week[] = [
       {
         title: "Lighthouse",
         note: "open-source tool for auditing the quality of a web page",
+        url: "https://github.com/GoogleChrome/lighthouse"
       },
     ],
   },
@@ -72,6 +73,8 @@ const WEEKS: Week[] = [
       },
       {
         title: "Why internet cookies are called cookies",
+        url: "https://youtu.be/moGFmrVK3AU?si=1v4lUfuf5tNz0Zmj",
+        kind: "video"
       },
     ],
   },

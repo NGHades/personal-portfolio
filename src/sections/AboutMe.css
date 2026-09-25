@@ -15,18 +15,19 @@
 
 /* The real h1, set like an eyebrow so the statement stays the visual headline. */
 .about-me-name {
-  font-family: var(--font-body);
-  font-weight: var(--weight-body);
-  font-size: var(--fs-body);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: var(--fs-hero);
   letter-spacing: normal;
-  color: var(--color-text-muted);
-  margin-bottom: 24px;
+
+  margin-bottom: 12px;
 }
 
 .about-me-statement {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: var(--font);
   font-size: var(--fs-hero);
+  color: var(--color-text-muted);
   line-height: 1.05;
   letter-spacing: -0.01em;
 }

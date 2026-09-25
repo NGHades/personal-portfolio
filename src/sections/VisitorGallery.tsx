@@ -10,7 +10,7 @@ const VisitorCardScene = lazy(() =>
   import("../components/VisitorCardScene").then((m) => ({ default: m.VisitorCardScene })),
 );
 
-const RECENT_NAME_COUNT = 6;
+const RECENT_NAME_COUNT = 5;
 
 export default function VisitorGallery() {
   // TODO: seed from Supabase instead of the mock set once reads are wired up (docs/adr/0002).
