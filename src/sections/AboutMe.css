@@ -1,59 +1,43 @@
-/* The site's opening section — hero and bio in one, so it gets hero spacing
-   rather than the default .section rhythm. dvh, not vh: mobile browser chrome
-   makes 100vh taller than the visible viewport. */
+/* The opening section: a centered serif statement, a full-width photo under it,
+   then the bio in a 1/3 + 2/3 column block. */
 .about-me {
   display: flex;
-  gap: 64px;
-  flex-wrap: wrap;
-  align-items: center;
-  min-height: 72dvh;
-  padding-top: 120px;
+  flex-direction: column;
+  gap: var(--section-gap);
+  padding-top: clamp(64px, 14vh, 140px);
 }
 
-.about-me-copy {
-  flex: 1 1 420px;
-  max-width: 560px;
+.about-me-hero {
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
 }
 
-.about-me-dot {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--color-accent);
+/* The real h1, set like an eyebrow so the statement stays the visual headline. */
+.about-me-name {
+  font-family: var(--font-body);
+  font-weight: var(--weight-body);
+  font-size: var(--fs-body);
+  letter-spacing: normal;
+  color: var(--color-text-muted);
   margin-bottom: 24px;
 }
 
-.about-me-eyebrow {
-  color: var(--color-text-muted);
-  margin-bottom: 12px;
+.about-me-statement {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: var(--fs-hero);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
 }
 
-.about-me-headline {
-  font-size: clamp(2.25rem, 5vw, 3.25rem);
-  line-height: 1.15;
-  margin-bottom: 20px;
+.about-me-photo {
+  width: 100%;
 }
 
-/* The one-line "who I am" statement: bolder and a step up in size from body copy,
-   so it reads as a second headline rather than a first paragraph. */
-.about-me-tagline {
-  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
-  font-weight: 700;
-  line-height: 1.5;
-  max-width: 34ch;
-  margin-bottom: 16px;
-}
-
-.about-me-body {
-  color: var(--color-text-secondary);
-  line-height: 1.6;
-}
-
-@media (max-width: 640px) {
-  .about-me {
-    gap: 40px;
-    min-height: 0;
-    padding-top: 96px;
-  }
+.about-me-bio-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  max-width: 40em;
 }

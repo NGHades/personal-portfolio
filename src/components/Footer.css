@@ -1,45 +1,34 @@
 .footer {
-  padding: 64px 0 96px;
-  border-top: 1px solid var(--color-border);
-  margin-top: 64px;
+  margin-top: calc(var(--section-gap) / 2);
 }
 
+/* The hairline sits inside the page column so it lines up with the gutters. */
 .footer-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-  text-align: center;
+  padding: 40px 0 80px;
+  border-top: 1px solid var(--color-border);
 }
 
 .footer-heading {
-  font-size: 1.75rem;
-  color: var(--color-text);
+  font-size: var(--fs-h2);
+  line-height: 1;
 }
 
-.footer-icons {
-  display: flex;
-  gap: 12px;
+.footer-links {
   list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
   margin: 0;
   padding: 0;
+  align-self: end;
 }
 
-.footer-chip {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-secondary);
+.footer-link {
   text-decoration: none;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  color: var(--color-text-muted);
+  transition: color 200ms var(--ease-out);
 }
 
-.footer-chip:hover {
+.footer-link:hover {
   color: var(--color-text);
-  border-color: var(--color-accent);
 }

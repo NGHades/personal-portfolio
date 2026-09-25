@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useImperativeHandle, useMemo, useRef, useState, type Ref } from "react";
 import { FaFlag, FaXmark } from "react-icons/fa6";
 import type { VisitorCard } from "../data/visitorCards";
 import { createVisitorCardCanvas, formatIssuedOn, formatVisitorNumber } from "./visitorCardFace";
@@ -8,6 +8,11 @@ import "./VisitorCardScene.css";
 type VisitorCardSceneProps = {
   cards: VisitorCard[];
   onReport: (card: VisitorCard) => void;
+};
+
+/** Lets something outside the canvas (the Drawing Names list) pull a card forward. */
+export type VisitorCardSceneHandle = {
+  select: (id: string) => void;
 };
 
 /**
@@ -40,10 +45,17 @@ function VisitorCardFallback({ cards, onReport }: VisitorCardSceneProps) {
  * mirrors the scene's selection into state so the details bar can render in DOM,
  * where it stays focusable and readable. All motion lives in VisitorCardGallery.
  */
-export function VisitorCardScene({ cards, onReport }: VisitorCardSceneProps) {
+export function VisitorCardScene({
+  cards,
+  onReport,
+  ref,
+}: VisitorCardSceneProps & { ref?: Ref<VisitorCardSceneHandle> }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasHostRef = useRef<HTMLDivElement>(null);
   const galleryRef = useRef<VisitorCardGallery | null>(null);
+
+  // No-op in the WebGL fallback, where every card is already laid out flat.
+  useImperativeHandle(ref, () => ({ select: (id) => galleryRef.current?.select(id) }), []);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [webglFailed, setWebglFailed] = useState(false);
   // Purely presentational — the report itself is the parent's business.

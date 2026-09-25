@@ -120,8 +120,8 @@ export default function ThingsILearned() {
 
   return (
     <section id="things-i-learned" className="page section">
-      <div className="til-heading-row">
-        <h2 className="til-heading">
+      <div className="til-heading-row" data-reveal>
+        <h2 className="section-heading">
           Things I <span className="italic-accent">learned.</span>
         </h2>
         <div className="til-rail-nav">
@@ -145,13 +145,14 @@ export default function ThingsILearned() {
           </button>
         </div>
       </div>
-      <p className="til-sub">
+      <p className="til-sub" data-reveal>
         A running log of small, mostly non-technical things — one card per week, newest
         first. Scroll sideways to go back in time.
       </p>
 
       <div
         className="til-rail"
+        data-reveal
         ref={railRef}
         onScroll={syncEdges}
         tabIndex={0}

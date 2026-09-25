@@ -3,36 +3,63 @@
   flex-direction: column;
   align-items: center;
   gap: 64px;
-  text-align: center;
 }
 
 .visitor-gallery-intro {
-  max-width: 520px;
+  max-width: 36em;
+  text-align: center;
 }
 
-.visitor-gallery-heading {
-  font-size: clamp(2rem, 4vw, 2.75rem);
-  margin-bottom: 16px;
-}
-
-.visitor-gallery-sub {
-  color: var(--color-text-secondary);
-  line-height: 1.6;
+.visitor-gallery-intro .section-heading {
+  margin-bottom: 20px;
 }
 
 .visitor-gallery-sub code {
   font-family: var(--font-mono);
-  color: var(--color-accent);
+  font-size: 0.9em;
 }
 
 .visitor-gallery-browse {
   width: 100%;
-  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
 }
 
-.visitor-gallery-browse-heading {
-  font-size: 1.5rem;
-  margin-bottom: 24px;
+/* Featured-clients treatment: Drawing Names as big underlined serif words that
+   wrap like a sentence. */
+.visitor-gallery-names {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15em 0.5em;
+  margin: 0;
+  padding: 0;
+  font-size: var(--fs-h2);
+}
+
+.visitor-gallery-name {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: inherit;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.1em;
+  cursor: pointer;
+  transition: opacity 300ms var(--ease-out);
+}
+
+/* Pointing at one name dims every other name to 20%. */
+.visitor-gallery-names:hover .visitor-gallery-name:not(:hover),
+.visitor-gallery-names:has(.visitor-gallery-name:focus-visible)
+  .visitor-gallery-name:not(:focus-visible) {
+  opacity: 0.2;
 }
 
 .visitor-gallery-scene-fallback {
@@ -41,7 +68,7 @@
   height: min(58vh, 540px);
   min-height: 340px;
   color: var(--color-text-muted);
-  font-size: 0.9rem;
+  font-size: var(--fs-small);
 }
 
 @media (max-width: 640px) {

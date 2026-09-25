@@ -39,7 +39,8 @@ const INK_FAINT = "#7a7a7a";
 const SURFACE = "#171717";
 const SURFACE_INSET = "#0f0f0f";
 const BORDER = "#2f2f2f";
-const ACCENT = "#b7a9f0";
+// No accent color in this variant — the visitor number reads in plain white.
+const ACCENT = "#ffffff";
 
 /** ISO (YYYY-MM-DD) -> MM/DD/YY, parsed by hand so the local timezone can't shift the day. */
 export function formatIssuedOn(iso: string): string {

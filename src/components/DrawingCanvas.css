@@ -22,12 +22,14 @@
 .drawing-btn {
   padding: 10px 22px;
   border-radius: var(--radius-pill);
-  font-size: 0.9rem;
+  font-size: var(--fs-small);
   cursor: pointer;
   border: 1px solid var(--color-border);
   background: transparent;
-  color: var(--color-text-secondary);
-  transition: border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+  color: var(--color-text);
+  transition:
+    border-color 200ms var(--ease-out),
+    opacity 200ms var(--ease-out);
 }
 
 .drawing-btn:disabled {
@@ -36,15 +38,42 @@
 }
 
 .drawing-btn--primary {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  color: #0d0d0d;
-  font-weight: 600;
+  background: var(--color-text);
+  border-color: transparent;
+  color: var(--color-bg);
+  font-weight: 500;
+}
+
+/* The one playful bit of chrome left in this variant: hovering the primary action
+   cycles it through four pastels. */
+@keyframes drawing-btn-cycle {
+  0%,
+  100% {
+    background: var(--color-cycle-1);
+  }
+  25% {
+    background: var(--color-cycle-2);
+  }
+  50% {
+    background: var(--color-cycle-3);
+  }
+  75% {
+    background: var(--color-cycle-4);
+  }
+}
+
+.drawing-btn--primary:hover:not(:disabled) {
+  animation: drawing-btn-cycle 5s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drawing-btn--primary:hover:not(:disabled) {
+    animation: none;
+  }
 }
 
 .drawing-btn--ghost:hover:not(:disabled) {
-  border-color: var(--color-accent);
-  color: var(--color-text);
+  border-color: var(--color-text);
 }
 
 .drawing-result {
@@ -56,6 +85,8 @@
 
 .drawing-result-name {
   font-family: var(--font-display);
-  font-size: 1.25rem;
-  color: var(--color-accent);
+  font-weight: 300;
+  font-size: var(--fs-h2);
+  line-height: 1.05;
+  text-align: center;
 }

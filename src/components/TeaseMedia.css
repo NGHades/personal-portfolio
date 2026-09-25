@@ -1,0 +1,31 @@
+.tease-media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.tease-media-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tease-media-img--hover {
+  opacity: 0;
+  transition: opacity 300ms var(--ease-out);
+}
+
+.tease:hover .tease-media-img--hover,
+.tease:focus-within .tease-media-img--hover {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tease-media-img--hover {
+    transition: none;
+  }
+}

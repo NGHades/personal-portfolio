@@ -14,15 +14,13 @@ body {
   padding: 0;
 }
 
-/* Graph-paper dot grid over the near-black base. `transparent 0` (rather than a
-   second length) keeps each dot's edge hard, so it stays a crisp point instead of a
-   blurry smudge on high-DPI screens. */
 body {
   background-color: var(--color-bg);
-  background-image: radial-gradient(circle at 1px 1px, var(--color-dot-grid) 1px, transparent 0);
-  background-size: var(--dot-grid-size) var(--dot-grid-size);
   color: var(--color-text);
   font-family: var(--font-body);
+  font-size: var(--fs-body);
+  font-weight: var(--weight-body);
+  line-height: 1.3;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -30,11 +28,27 @@ a {
   color: inherit;
 }
 
+/* White on black is the focus ring everywhere except the post-it, which sets its own. */
+:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 3px;
+}
+
+/* The display serif is a light face and stays one: bold inside a headline would
+   fall back to a synthesized weight that the rest of the type never uses. */
 h1,
 h2,
 h3 {
   font-family: var(--font-display);
+  font-weight: 300;
+  letter-spacing: -0.01em;
   margin: 0;
+}
+
+h1 :is(strong, b),
+h2 :is(strong, b),
+h3 :is(strong, b) {
+  font-weight: 300;
 }
 
 p {
@@ -43,6 +57,7 @@ p {
 
 button {
   font-family: inherit;
+  font-weight: inherit;
 }
 
 .page {
@@ -51,11 +66,60 @@ button {
   padding: 0 var(--page-gutter);
 }
 
+/* padding-block, not padding: .page owns the horizontal gutters on the same element. */
 .section {
-  padding: 96px 0;
-  scroll-margin-top: 100px;
+  padding-block: calc(var(--section-gap) / 2);
+  scroll-margin-top: 80px;
+}
+
+.section-heading {
+  font-size: var(--fs-h2);
+  line-height: 1;
 }
 
 .italic-accent {
   font-style: italic;
+}
+
+/* Small bold label in the left third of a 1/3 + 2/3 column block. */
+.column-label {
+  font-family: var(--font-body);
+  letter-spacing: normal;
+  font-size: var(--fs-small);
+  font-weight: var(--weight-label);
+}
+
+.columns {
+  display: grid;
+  gap: 12px 40px;
+}
+
+@media (min-width: 768px) {
+  .columns {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+/* Scroll reveal: blocks fade and rise once as they enter the viewport. Hidden only
+   once the script has marked the page as ready, so nothing stays invisible if it
+   never runs. */
+.reveal-ready [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 600ms var(--ease-out),
+    transform 600ms var(--ease-out-expo);
+}
+
+.reveal-ready [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-ready [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

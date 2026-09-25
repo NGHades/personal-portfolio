@@ -8,11 +8,10 @@
 }
 
 .send-message-heading {
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 }
 
 .send-message-sub {
   color: var(--color-text-muted);
-  margin-bottom: 32px;
+  margin-bottom: 48px;
 }
