@@ -1,4 +1,5 @@
 import { ImagePlaceholder } from "./ImagePlaceholder";
+import { LazyImage } from "./LazyImage";
 import "./TeaseMedia.css";
 
 type TeaseMediaProps = {
@@ -21,9 +22,9 @@ export function TeaseMedia({ alt, src, hoverSrc }: TeaseMediaProps) {
 
   return (
     <div className="tease-media">
-      <img src={src} alt={alt} className="tease-media-img" />
+      <LazyImage src={src} alt={alt} className="tease-media-img" />
       {/* Decorative: the first image already carries the description. */}
-      {hoverSrc && <img src={hoverSrc} alt="" className="tease-media-img tease-media-img--hover" />}
+      {hoverSrc && <LazyImage src={hoverSrc} alt="" className="tease-media-img tease-media-img--hover" />}
     </div>
   );
 }

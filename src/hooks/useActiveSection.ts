@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 
-/** Tracks which section id is currently most visible, for scroll-spy nav highlighting. */
-export function useActiveSection(ids: string[]): string {
+/**
+ * Tracks which section id is currently most visible, for scroll-spy nav highlighting.
+ * `pageKey` re-finds the sections when it changes — the nav outlives page changes,
+ * so the sections it first observed may have unmounted and remounted since.
+ */
+export function useActiveSection(ids: string[], pageKey?: string): string {
   const [activeId, setActiveId] = useState(ids[0] ?? "");
 
   useEffect(() => {
@@ -20,7 +24,7 @@ export function useActiveSection(ids: string[]): string {
 
     elements.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, [ids]);
+  }, [ids, pageKey]);
 
   return activeId;
 }

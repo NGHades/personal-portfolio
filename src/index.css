@@ -102,24 +102,16 @@ button {
 
 /* Scroll reveal: blocks fade and rise once as they enter the viewport. Hidden only
    once the script has marked the page as ready, so nothing stays invisible if it
-   never runs. */
+   never runs — and the script skips reduced-motion and touch devices entirely. */
 .reveal-ready [data-reveal] {
   opacity: 0;
-  transform: translateY(24px);
+  transform: translateY(20px);
   transition:
-    opacity 600ms var(--ease-out),
-    transform 600ms var(--ease-out-expo);
+    opacity 800ms var(--ease-out),
+    transform 800ms var(--ease-out);
 }
 
 .reveal-ready [data-reveal].is-revealed {
   opacity: 1;
   transform: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .reveal-ready [data-reveal] {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
 }

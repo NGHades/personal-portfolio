@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router";
 import { useActiveSection } from "../hooks/useActiveSection";
 import "./NavBar.css";
 
+// Sections of the home page. Links go to "/#id" so they also work from a case study.
 const LINKS = [
-  { href: "#about", label: "About Me", id: "about" },
-  { href: "#projects", label: "Projects", id: "projects" },
-  { href: "#things-i-learned", label: "Things I Learned", id: "things-i-learned" },
-  { href: "#visitor-gallery", label: "Visitor Gallery", id: "visitor-gallery" },
+  { label: "About Me", id: "about" },
+  { label: "Projects", id: "projects" },
+  { label: "Things I Learned", id: "things-i-learned" },
+  { label: "Visitor Gallery", id: "visitor-gallery" },
 ];
 
 // Hoisted: the scroll-spy effect keys off this array, so building it inline would
@@ -14,7 +16,12 @@ const LINKS = [
 const SECTION_IDS = LINKS.map((link) => link.id);
 
 export function NavBar() {
-  const activeId = useActiveSection(SECTION_IDS);
+  const { pathname } = useLocation();
+  const onHome = pathname === "/";
+  const spiedId = useActiveSection(SECTION_IDS, pathname);
+  // Off the home page none of these sections are on screen, so nothing is current —
+  // except Projects while reading a case study, which lives under it.
+  const activeId = onHome ? spiedId : pathname.startsWith("/projects/") ? "projects" : null;
   // Only meaningful below the hamburger breakpoint; above it the list is always shown.
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -32,11 +39,11 @@ export function NavBar() {
   return (
     <header className={`navbar${menuOpen ? " navbar--open" : ""}`}>
       <nav className="navbar-inner">
-        <a href="#about" className="navbar-mark" aria-label="Back to top" onClick={closeMenu}>
+        <Link to="/#about" className="navbar-mark" aria-label="Back to top" onClick={closeMenu}>
           {/* alt="" on purpose: the link already carries the accessible name, so a
               described image would just make screen readers announce it twice. */}
           <img src="/panda-frog.svg" alt="" className="navbar-mark-logo" />
-        </a>
+        </Link>
         <button
           type="button"
           className="navbar-toggle"
@@ -49,14 +56,14 @@ export function NavBar() {
         <ul className="navbar-links" id="navbar-links">
           {LINKS.map((link) => (
             <li key={link.id}>
-              <a
-                href={link.href}
+              <Link
+                to={`/#${link.id}`}
                 className={`navbar-link${activeId === link.id ? " navbar-link--active" : ""}`}
                 aria-current={activeId === link.id ? "true" : undefined}
                 onClick={closeMenu}
               >
                 {link.label}
-              </a>
+              </Link>
             </li>
           ))}
           {/* Resume has no section of its own — this downloads the PDF directly.

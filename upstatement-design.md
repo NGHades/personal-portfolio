@@ -122,7 +122,21 @@ Scale (fluid until 1400px, fixed from then on):
 - Gutters: 20px below 768px, 40px from 768px up. Section gap: `clamp(80px, 16vh, 160px)`.
 - Radii: `--radius-sm: 7px`, `--radius: 14px`, `--radius-lg: 28px`.
 - Easing: `--ease-out: cubic-bezier(.215,.61,.355,1)` for fades and hovers; `--ease-out-expo: cubic-bezier(.16,1,.3,1)` for the scroll reveal's rise.
-- Scroll reveal: a 24px rise plus a fade over about 600ms, triggered once per block by IntersectionObserver. Under `prefers-reduced-motion`, blocks appear with no movement and the pastel hover cycle doesn't run.
+- Scroll reveal: a 20px rise plus a fade over 800ms with `--ease-out`, triggered once per block by IntersectionObserver 100px above the viewport's bottom edge. Blocks that enter together are staggered 80ms apart. These are Upstatement's ScrollReveal settings, read from their `main.js`. As on their site, it's skipped on touch devices and under `prefers-reduced-motion`, where blocks simply appear. The pastel hover cycle also doesn't run under reduced motion.
+
+---
+
+## Case studies
+
+Each project gets a page at `/projects/:slug` (React Router), modeled on [upstatement.com/case-study/nike](https://upstatement.com/case-study/nike), read on 2026-09-25. Content lives in `src/data/projects.ts` as typed blocks, mirroring their CMS content blocks.
+
+- **Topper:** the title at hero size, then the pitch in bold over a hairline, the introduction, and two columns (**Tech Stack** / **What I Built**, in place of their *What We Did / What We Made*). Links to the live site and GitHub come next. From 1070px up, the text takes the left 45% (min-height 600–700px, bottom-aligned) and the hero asset is pinned bottom-right at 50% width, max 760px.
+- **Blocks:** text blocks are capped at 780px and centered. Image blocks take one of `text` (780px), `medium` (1100px), `full` (page width inside the gutters) or `breakout` (edge to edge, square corners). Blocks are spaced 100px apart from 768px up (8vh below that). Two text blocks in a row get a hairline between them. Image corners: 7px, or 14px from 600px up.
+- **Up Next:** a hairline, a bold "Up Next:" label and teases for the next two projects.
+- **Loading:** there's no page transition, because Upstatement's pages are plain full loads. Navigating resets scroll to the top, and the new page runs its own scroll-reveal pass. Images load lazily and fade in over 200ms (`--ease-out-expo`) once decoded, matching their `lazy-img`.
+- **Links:** underlined 1px at a 0.15em offset. On hover they turn gray, where Upstatement uses each case study's `--c-pop` color.
+
+Home-page teases now link to the case study rather than the live demo. The demo and GitHub links live in the topper.
 
 ---
 
