@@ -2,6 +2,14 @@
 // (name, pitch, image); /projects/:slug renders the rest. Block types mirror
 // Upstatement's case-study content blocks — see upstatement-design.md § Case studies.
 
+// Vite fingerprints and serves these; the import gives back the final URL.
+import frogodoroBgSelection from "../assets/frogodoro-bg-selection-page.jpg";
+import frogodoroLogin from "../assets/frogodoro-login-page.jpg";
+import frogodoroMain from "../assets/frogodoro-main-page.jpg";
+import frogodoroSettings from "../assets/frogodoro-settings-page.jpg";
+import frogodoroVivarium from "../assets/frogodoro-vivarium-bg.jpg";
+import frogodoroMainPageRecording from "../assets/frogodoro-main-page-recording.mp4";
+
 /** How wide a block sits: text column (780px), medium (1100px), full page width,
  *  or breakout (edge to edge, no gutter, square corners). */
 export type BlockAlign = "text" | "medium" | "full" | "breakout";
@@ -44,9 +52,7 @@ export type Project = {
   };
 };
 
-const FROGODORO_ASSETS = "https://raw.githubusercontent.com/NGHades/frogodoro/main/src/assets";
 
-// First project gets the large tease on the home page, so order matters.
 export const PROJECTS: Project[] = [
   {
     slug: "frogodoro",
@@ -55,6 +61,8 @@ export const PROJECTS: Project[] = [
     tags: ["React", "Vite", "Tailwind CSS", "Firebase"],
     githubUrl: "https://github.com/NGHades/frogodoro",
     liveUrl: "https://frogodoro-alpha.vercel.app/",
+    image: frogodoroVivarium,
+    hoverImage: frogodoroMain,
     caseStudy: {
       introduction:
         "Frogodoro is a Pomodoro timer that pairs focused work sessions with a hopping frog, lo-fi background music, and a handful of relaxing scenes to work in front of. Work in focused bursts, take short and long breaks, and optionally sign in to track your stats across sessions.",
@@ -68,9 +76,8 @@ export const PROJECTS: Project[] = [
           items: ["Pomodoro timer", "Animated frog companion", "Lo-fi music player", "Six scene backgrounds", "Stats and streaks"],
         },
       ],
-      // TODO: main-page.gif from the repo is ~29MB — export it as an MP4/WebM loop or a
-      // still screenshot before using it here.
-      heroAlt: "Frogodoro's main timer screen",
+      heroImage: frogodoroMainPageRecording,
+      heroAlt: "Frogodoro's timer over the vivarium scene",
       blocks: [
         {
           type: "text",
@@ -81,10 +88,9 @@ export const PROJECTS: Project[] = [
         },
         {
           type: "image",
-          align: "full",
-          // TODO: vivarium-background-gif.gif is ~9MB — convert to video before using.
-          alt: "The vivarium background with the frog idling",
-          aspectRatio: "16 / 9",
+          align: "text",
+          src: frogodoroVivarium,
+          alt: "The main timer screen: mode buttons, the frog perched on the timer ring, and playback controls, over the river landscape",
         },
         {
           type: "text",
@@ -103,10 +109,17 @@ export const PROJECTS: Project[] = [
         },
         {
           type: "image",
-          align: "breakout",
-          // TODO: background-change-gif.gif is ~12MB — convert to video before using.
-          alt: "Switching between scene backgrounds",
-          aspectRatio: "21 / 9",
+          align: "text",
+          src: frogodoroSettings,
+          alt: "The timer preferences, with focus and break durations and auto-start toggles",
+          caption: "Durations and auto-start live in one panel, saved locally or to your account.",
+        },
+        {
+          type: "image",
+          align: "text",
+          src: frogodoroBgSelection,
+          alt: "The background picker, with River Landscape selected next to Koi Pond",
+          caption: "Six scenes to work in front of, from a river landscape to a koi pond.",
         },
         {
           type: "text",
@@ -126,10 +139,10 @@ export const PROJECTS: Project[] = [
         },
         {
           type: "image",
-          align: "medium",
-          src: `${FROGODORO_ASSETS}/settings-popup.png`,
-          alt: "The settings panel, with focus and break durations and auto-start toggles",
-          caption: "Durations and auto-start live in one panel, saved locally or to your account.",
+          align: "text",
+          src: frogodoroLogin,
+          alt: "The account tab's login form, with a link to sign up",
+          caption: "An account is one tab in preferences — skip it and everything still works.",
         },
         {
           type: "text",

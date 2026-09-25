@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useParams } from "react-router";
 import { ImagePlaceholder } from "../components/ImagePlaceholder";
 import { LazyImage } from "../components/LazyImage";
+import { LazyVideo } from "../components/LazyVideo";
 import { ProjectTease } from "../components/ProjectTease";
 import { findProject, upNext, type CaseStudyBlock, type Project } from "../data/projects";
 import { useScrollReveal } from "../hooks/useScrollReveal";
@@ -113,14 +114,17 @@ function Block({ block }: { block: CaseStudyBlock }) {
   );
 }
 
-/** An image's frame: a placeholder until there's a real asset, then the image fading in. */
+/** Asset URLs ending in a video extension play as a looping video instead of an image. */
+const VIDEO_EXTENSION = /\.(mp4|webm)$/i;
+
+/** An image's frame: a placeholder until there's a real asset, then the image (or video) fading in. */
 function Frame({ src, alt, aspectRatio }: { src?: string; alt: string; aspectRatio?: string }) {
   if (!src) return <ImagePlaceholder label={alt} aspectRatio={aspectRatio ?? "16 / 9"} className="cs-frame" />;
 
   // Without an aspect ratio the image keeps its natural shape instead of being cropped.
   return (
     <div className={`cs-frame${aspectRatio ? " cs-frame--cropped" : ""}`} style={{ aspectRatio }}>
-      <LazyImage src={src} alt={alt} />
+      {VIDEO_EXTENSION.test(src) ? <LazyVideo src={src} label={alt} /> : <LazyImage src={src} alt={alt} />}
     </div>
   );
 }

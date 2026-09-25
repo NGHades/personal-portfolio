@@ -8,6 +8,11 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Set by NavBar while the mobile drawer is open. */
+html.scroll-locked {
+  overflow: hidden;
+}
+
 html,
 body {
   margin: 0;

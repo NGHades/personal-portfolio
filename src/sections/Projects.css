@@ -21,3 +21,21 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Every tease takes the same footprint: the 16:9 screenshot is fixed by TeaseMedia,
+   the caption always reserves two lines and the tags one, so rows line up
+   regardless of how long a pitch runs. */
+.projects-grid .project-tease-caption {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  min-height: calc(2 * 1.3em);
+}
+
+.projects-grid .project-tease-tags {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

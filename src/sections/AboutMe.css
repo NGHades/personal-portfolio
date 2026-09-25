@@ -5,6 +5,8 @@
   flex-direction: column;
   gap: var(--section-gap);
   padding-top: clamp(64px, 14vh, 140px);
+  /* Clear air before Projects, on top of the shared section padding. */
+  padding-bottom: clamp(96px, 18vh, 200px);
 }
 
 .about-me-hero {
@@ -41,4 +43,15 @@
   flex-direction: column;
   gap: 1em;
   max-width: 40em;
+  margin: 0 auto;
+}
+
+/* A slower, farther rise than the site-wide reveal so the intro visibly moves in. */
+.reveal-ready .about-me [data-reveal] {
+  transform: translateY(60px);
+  transition-duration: 1800ms;
+}
+
+.reveal-ready .about-me [data-reveal].is-revealed {
+  transform: none;
 }

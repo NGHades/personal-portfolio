@@ -64,8 +64,16 @@
   cursor: pointer;
 }
 
+/* Slide-in drawer for narrow screens. Always rendered so it can animate; hidden
+   (and inert) off-screen when closed, and never shown above the breakpoint. */
+.navbar-backdrop,
+.navbar-drawer {
+  display: none;
+}
+
 /* Five labels, one of them three words long, don't fit on one line below this —
-   so the hamburger takes over here rather than at Upstatement's 768px. */
+   so the drawer takes over here rather than at Upstatement's 768px.
+   Keep in sync with DRAWER_BREAKPOINT in NavBar.tsx. */
 @media (max-width: 1070px) {
   .navbar-toggle {
     display: block;
@@ -75,27 +83,85 @@
     display: none;
   }
 
-  .navbar--open {
-    background: var(--color-bg);
+  .navbar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    background: rgb(0 0 0 / 0.6);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms var(--ease-out);
   }
 
-  /* The open menu fills the viewport under the bar, with the links set large. */
-  .navbar--open .navbar-links {
+  .navbar-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .navbar-drawer {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
     position: fixed;
-    inset: 68px 0 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 21;
+    width: min(360px, 85vw);
+    padding: 16px var(--page-gutter) 32px;
+    background: var(--color-bg);
+    border-left: 1px solid rgb(255 255 255 / 0.1);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    transform: translateX(100%);
+    visibility: hidden;
+    transition:
+      transform 350ms var(--ease-out),
+      visibility 0s linear 350ms;
+  }
+
+  .navbar-drawer.is-open {
+    transform: none;
+    visibility: visible;
+    transition: transform 350ms var(--ease-out);
+  }
+
+  .navbar-drawer-close {
+    align-self: flex-end;
+    /* Lines up with the Menu button it replaces: same 36px logo row as the bar. */
+    min-height: 36px;
+    padding: 8px 0;
+    border: none;
+    background: none;
+    color: var(--color-text);
+    font-size: var(--fs-body);
+    cursor: pointer;
+  }
+
+  .navbar-drawer-links {
+    list-style: none;
     display: flex;
     flex-direction: column;
     gap: 20px;
     margin: 0;
-    padding: 24px var(--page-gutter);
-    background: var(--color-bg);
-    overflow-y: auto;
+    padding: 0;
   }
 
-  .navbar--open .navbar-link {
+  .navbar-drawer .navbar-link {
+    display: block;
     font-family: var(--font-display);
     font-weight: 300;
     font-size: var(--fs-h2);
     line-height: 1.1;
+    white-space: normal;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar-backdrop,
+  .navbar-drawer,
+  .navbar-drawer.is-open {
+    transition: none;
   }
 }
