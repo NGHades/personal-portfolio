@@ -22,8 +22,8 @@ export type VisitorCard = {
 /* ------------------------------------------------------------------ *
  * Stroke authoring helpers
  *
- * The mock drawings below stand in for real visitor submissions until the
- * Edge Function is wired up (docs/adr/0002). They're built from primitives
+ * The mock drawings below pad the gallery after the real visitor submissions,
+ * so it never looks empty. They're built from primitives
  * rather than transcribed point lists so they stay readable and editable.
  * ------------------------------------------------------------------ */
 
@@ -183,20 +183,24 @@ export const MOCK_VISITOR_CARDS: VisitorCard[] = [
 
 /** Local date as YYYY-MM-DD. Built by hand because toISOString() reports UTC, which
  *  rolls a California evening over to tomorrow's date. */
-function todayIso(): string {
-  const now = new Date();
+function localIsoDate(date: Date): string {
   const pad = (n: number) => String(n).padStart(2, "0");
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
-/** Issues the next card in the series — the visitor number is the gallery's, not the card's. */
-export function issueVisitorCard(existing: VisitorCard[], strokes: Stroke[], drawingName: string): VisitorCard {
-  const visitorNumber = existing.reduce((max, card) => Math.max(max, card.visitorNumber), 0) + 1;
-  return {
-    id: `card-${visitorNumber}-${Date.now()}`,
-    visitorNumber,
-    drawingName,
-    issuedOn: todayIso(),
-    strokes,
-  };
+/** A row of the public `drawings` table — only the columns visitors can read. */
+export type DrawingRow = { id: string; name: string; strokes: Stroke[]; created_at: string };
+
+/** Oldest-first rows -> newest-first cards. The visitor number is the drawing's place in
+ *  the series, so it's assigned here rather than stored. */
+export function cardsFromDrawings(rows: DrawingRow[]): VisitorCard[] {
+  return rows
+    .map((row, i) => ({
+      id: row.id,
+      visitorNumber: i + 1,
+      drawingName: row.name,
+      issuedOn: localIsoDate(new Date(row.created_at)),
+      strokes: row.strokes,
+    }))
+    .reverse();
 }

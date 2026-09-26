@@ -1,13 +1,17 @@
+import { FunctionsHttpError } from "@supabase/supabase-js";
 import { useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { FUN_ADJECTIVES } from "../data/funAdjectives";
 import type { Point, Stroke } from "../data/visitorCards";
 import { classifySketch } from "../lib/sketchOracle";
+import { supabase } from "../lib/supabase";
 import "./DrawingCanvas.css";
 
 type GuessState =
   | { status: "drawing" }
   | { status: "guessing" }
-  | { status: "guessed"; drawingName: string }
+  // submitError: the last "Add to gallery" failed; the visitor can retry without redrawing.
+  | { status: "guessed"; drawingName: string; submitError?: string }
+  | { status: "submitting"; drawingName: string }
   | { status: "submitted"; drawingName: string }
   | { status: "error"; message: string };
 
@@ -20,16 +24,29 @@ async function guessDrawingName(strokes: Stroke[]): Promise<string> {
   return `${adjective} ${noun[0].toUpperCase()}${noun.slice(1)}`;
 }
 
-// TODO: send { strokes, drawingName } to the Supabase Edge Function (docs/adr/0002)
-// so it lands in the public gallery for everyone, not just this session.
+/** Writes go through the submit-drawing Edge Function so they can be rate-limited (docs/adr/0002). */
 async function submitToGallery(strokes: Stroke[], drawingName: string): Promise<void> {
-  console.log("TODO: submit to gallery via Supabase Edge Function", { strokes, drawingName });
-  await new Promise((resolve) => setTimeout(resolve, 300));
+  const { error } = await supabase.functions.invoke("submit-drawing", {
+    body: { name: drawingName, strokes },
+  });
+  if (!error) return;
+
+  // The function answers 4xx with { error: "..." } meant for the visitor, e.g. the cooldown.
+  if (error instanceof FunctionsHttpError) {
+    const body = await error.context.json().catch(() => null);
+    if (typeof body?.error === "string") throw new Error(body.error);
+  }
+  throw error;
 }
+
+const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
 
 /** Canvas pixels -> the 0..1 space Visitor Cards store, so a card renders at any size. */
 function normalize(strokes: Stroke[]): Stroke[] {
-  return strokes.map((stroke) => stroke.map(({ x, y }) => ({ x: x / CANVAS_SIZE, y: y / CANVAS_SIZE })));
+  // Clamped because pointer coords include the canvas border and can land just outside 0..1.
+  return strokes.map((stroke) =>
+    stroke.map(({ x, y }) => ({ x: clamp01(x / CANVAS_SIZE), y: clamp01(y / CANVAS_SIZE) })),
+  );
 }
 
 type DrawingCanvasProps = {
@@ -105,10 +122,19 @@ export function DrawingCanvas({ onSubmit }: DrawingCanvasProps) {
 
   const handleSubmit = async () => {
     if (state.status !== "guessed") return;
+    const { drawingName } = state;
     const strokes = normalize(strokesRef.current);
-    await submitToGallery(strokes, state.drawingName);
-    onSubmit?.(strokes, state.drawingName);
-    setState({ status: "submitted", drawingName: state.drawingName });
+    setState({ status: "submitting", drawingName });
+    try {
+      await submitToGallery(strokes, drawingName);
+    } catch (err) {
+      console.error("gallery submission failed", err);
+      const submitError = err instanceof Error && err.message ? err.message : "Couldn't add it — try again?";
+      setState({ status: "guessed", drawingName, submitError });
+      return;
+    }
+    onSubmit?.(strokes, drawingName);
+    setState({ status: "submitted", drawingName });
   };
 
   return (
@@ -140,9 +166,14 @@ export function DrawingCanvas({ onSubmit }: DrawingCanvasProps) {
           <p className="drawing-result-name">Thinking…</p>
         )}
 
+        {state.status === "submitting" && (
+          <p className="drawing-result-name">Adding {state.drawingName} to the gallery…</p>
+        )}
+
         {state.status === "guessed" && (
           <div className="drawing-result">
             <p className="drawing-result-name">{state.drawingName}</p>
+            {state.submitError && <p className="drawing-result-error" role="alert">{state.submitError}</p>}
             <div className="drawing-canvas-controls">
               <button className="drawing-btn drawing-btn--ghost" onClick={clearCanvas}>
                 Draw again

@@ -90,3 +90,8 @@
   line-height: 1.05;
   text-align: center;
 }
+
+.drawing-result-error {
+  color: var(--color-cycle-1);
+  text-align: center;
+}

@@ -1,7 +1,8 @@
-import { Suspense, lazy, useCallback, useRef, useState } from "react";
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DrawingCanvas } from "../components/DrawingCanvas";
 import type { VisitorCardSceneHandle } from "../components/VisitorCardScene";
-import { MOCK_VISITOR_CARDS, issueVisitorCard, type Stroke, type VisitorCard } from "../data/visitorCards";
+import { MOCK_VISITOR_CARDS, type VisitorCard } from "../data/visitorCards";
+import { fetchVisitorCards } from "../lib/visitorGallery";
 import "./VisitorGallery.css";
 
 // three.js is the heaviest dependency on the site and this is the only section
@@ -13,22 +14,34 @@ const VisitorCardScene = lazy(() =>
 const RECENT_NAME_COUNT = 5;
 
 export default function VisitorGallery() {
-  // TODO: seed from Supabase instead of the mock set once reads are wired up (docs/adr/0002).
-  const [cards, setCards] = useState<VisitorCard[]>(MOCK_VISITOR_CARDS);
+  // Real submissions from Supabase, newest first. The mock cards follow them so the
+  // gallery never looks empty.
+  const [visitorCards, setVisitorCards] = useState<VisitorCard[]>([]);
   const sceneRef = useRef<VisitorCardSceneHandle>(null);
 
-  const handleSubmit = useCallback((strokes: Stroke[], drawingName: string) => {
-    setCards((current) => [...current, issueVisitorCard(current, strokes, drawingName)]);
+  const loadVisitorCards = useCallback(() => {
+    fetchVisitorCards()
+      .then(setVisitorCards)
+      .catch((err) => console.error("couldn't load the visitor gallery", err));
   }, []);
+
+  useEffect(loadVisitorCards, [loadVisitorCards]);
+
+  // Refetch rather than append locally, so the new card gets its real id and number.
+  const handleSubmit = loadVisitorCards;
 
   const handleReport = useCallback((card: VisitorCard) => {
     // TODO: wire up to the flag/report Edge Function (docs/adr/0002).
     console.log("TODO: report card via Supabase Edge Function", card.id);
   }, []);
 
-  const recentCards = [...cards]
-    .sort((a, b) => b.visitorNumber - a.visitorNumber)
-    .slice(0, RECENT_NAME_COUNT);
+  // Memoized: the scene re-lays out its cards whenever this array changes identity.
+  const cards = useMemo(() => [...visitorCards, ...MOCK_VISITOR_CARDS], [visitorCards]);
+
+  const recentCards = [
+    ...visitorCards,
+    ...[...MOCK_VISITOR_CARDS].sort((a, b) => b.visitorNumber - a.visitorNumber),
+  ].slice(0, RECENT_NAME_COUNT);
 
   return (
     <section id="visitor-gallery" className="page section visitor-gallery">
