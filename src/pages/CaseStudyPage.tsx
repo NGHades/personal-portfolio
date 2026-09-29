@@ -4,7 +4,7 @@ import { ImagePlaceholder } from "../components/ImagePlaceholder";
 import { LazyImage } from "../components/LazyImage";
 import { LazyVideo } from "../components/LazyVideo";
 import { ProjectTease } from "../components/ProjectTease";
-import { findProject, upNext, type CaseStudyBlock, type Project } from "../data/projects";
+import { findProject, upNext, type CaseStudyBlock, type CaseStudyImage, type Project } from "../data/projects";
 import { useScrollReveal } from "../hooks/useScrollReveal";
 import NotFoundPage from "./NotFoundPage";
 import "./CaseStudyPage.css";
@@ -89,9 +89,12 @@ function CaseStudy({ project }: { project: Project }) {
 
 function Block({ block }: { block: CaseStudyBlock }) {
   if (block.type === "text") {
+    // Floats don't work inside the usual flex column, so a block with a side image flows as plain block layout.
+    const { sideImage } = block;
     return (
-      <div className="cs-block cs-block--text" data-reveal>
+      <div className={`cs-block cs-block--text${sideImage ? " cs-block--wrapped" : ""}`} data-reveal>
         {block.heading && <h2 className="cs-block-heading">{block.heading}</h2>}
+        {sideImage && <Figure image={sideImage} className={`cs-wrap-float cs-wrap-float--${sideImage.side}`} />}
         {block.paragraphs.map((paragraph) => (
           <p key={paragraph}>{paragraph}</p>
         ))}
@@ -106,10 +109,36 @@ function Block({ block }: { block: CaseStudyBlock }) {
     );
   }
 
+  if (block.type === "gallery") {
+    return (
+      <div className="cs-block cs-block--gallery" data-reveal>
+        {block.images.map((image, index) => (
+          <Figure key={index} image={image} />
+        ))}
+      </div>
+    );
+  }
+
+  return <Figure image={block} className={`cs-block cs-block--image cs-align-${block.align}`} reveal />;
+}
+
+function Figure({ image, className, reveal }: { image: CaseStudyImage; className?: string; reveal?: boolean }) {
   return (
-    <figure className={`cs-block cs-block--image cs-align-${block.align}`} data-reveal>
-      <Frame src={block.src} alt={block.alt} aspectRatio={block.aspectRatio} />
-      {block.caption && <figcaption className="cs-block-caption">{block.caption}</figcaption>}
+    <figure className={className} data-reveal={reveal || undefined}>
+      <Frame src={image.src} alt={image.alt} aspectRatio={image.aspectRatio} />
+      {(image.caption || image.link) && (
+        <figcaption className="cs-block-caption">
+          {image.caption}
+          {image.link && (
+            <>
+              {image.caption && " "}
+              <a href={image.link.href} target="_blank" rel="noreferrer">
+                {image.link.label} <span aria-hidden="true">↗</span>
+              </a>
+            </>
+          )}
+        </figcaption>
+      )}
     </figure>
   );
 }

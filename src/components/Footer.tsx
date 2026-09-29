@@ -3,8 +3,8 @@ import "./Footer.css";
 // TODO: replace with Richie's real profile URLs.
 const SOCIAL_LINKS = [
   { label: "Email", href: "mailto:richienguyen01@gmail.com" },
-  { label: "GitHub", href: "https://github.com/" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/" },
+  { label: "GitHub", href: "https://github.com/NGHades" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/richie-nguyencs" },
 ];
 
 export function Footer() {

@@ -20,6 +20,19 @@ type Week = {
 // every other card with it.
 const WEEKS: Week[] = [
   {
+    id: "2026-w04",
+    label: "Week 4",
+    dates: "Sept 27 – Oct 3 ",
+    entries: [
+      {
+        title: "Why internet cookies are called cookies",
+        url: "https://youtu.be/moGFmrVK3AU?si=1v4lUfuf5tNz0Zmj",
+        kind: "video"
+      },
+    ],
+  },
+  
+  {
     id: "2026-w03",
     label: "Week 3",
     dates: "Aug 9 – Aug 15",
@@ -70,11 +83,6 @@ const WEEKS: Week[] = [
         url: "https://arxiv.org/pdf/2506.08872",
         kind: "paper",
         note: "the real question isn’t whether it exists, but whether anyone is ever made to pay it back",
-      },
-      {
-        title: "Why internet cookies are called cookies",
-        url: "https://youtu.be/moGFmrVK3AU?si=1v4lUfuf5tNz0Zmj",
-        kind: "video"
       },
     ],
   },

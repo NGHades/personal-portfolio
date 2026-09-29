@@ -176,8 +176,9 @@
   margin-inline: calc(-1 * var(--page-gutter));
 }
 
-/* Two text blocks in a row get a hairline between them. */
-.cs-block--text + .cs-block--text {
+/* Two text blocks in a row get a hairline between them — except rows of text beside
+   images, which read as one run of alternating sides. */
+.cs-block--text + .cs-block--text:not(.cs-block--wrapped) {
   border-top: 1px solid var(--color-border);
   padding-top: 8vh;
 }
@@ -240,6 +241,34 @@
   border-radius: 0;
 }
 
+/* Stacked on phones, two to a row from 768px (see below). */
+.cs-block--gallery {
+  display: grid;
+  gap: 40px 24px;
+  align-items: start;
+}
+
+.cs-block--gallery figure {
+  margin: 0;
+}
+
+/* Text wrapping a floated image: block flow instead of flex, gaps as margins. */
+.cs-block--wrapped {
+  display: flow-root;
+}
+
+.cs-block--wrapped > * {
+  margin: 0 0 20px;
+}
+
+.cs-block--wrapped > :last-child {
+  margin-bottom: 0;
+}
+
+.cs-block--wrapped > .cs-wrap-float {
+  margin-block: 20px 40px;
+}
+
 .cs-block-caption {
   margin-top: 12px;
   max-width: 950px;
@@ -266,8 +295,35 @@
     margin-block: 100px;
   }
 
-  .cs-block--text + .cs-block--text {
+  .cs-block--text + .cs-block--text:not(.cs-block--wrapped) {
     padding-top: 100px;
+  }
+
+  .cs-block--gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Same half-row size as a gallery image; the text wraps on the other side. */
+  .cs-block--wrapped > .cs-wrap-float {
+    width: calc(50% - 12px);
+    margin-block: 6px 24px;
+  }
+
+  .cs-block--wrapped > .cs-wrap-float--right {
+    float: right;
+    margin-left: 24px;
+  }
+
+  .cs-block--wrapped > .cs-wrap-float--left {
+    float: left;
+    margin-right: 24px;
+  }
+
+  /* A lone image keeps the half-row size, centered. */
+  .cs-block--gallery > :only-child {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc(50% - 12px);
   }
 }
 
