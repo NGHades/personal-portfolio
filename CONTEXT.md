@@ -17,7 +17,7 @@ The [random adjective] + [sketch-oracle-guessed noun] label generated for a Visi
 _Avoid_: Result, label, title
 
 **sketch-oracle**:
-Richie's existing CNN, currently a Python/TensorFlow model, that classifies a sketch into one of a fixed set of ~100 common object nouns (Quick Draw-style categories). Powers the Visitor Gallery's guess step.
+Richie's existing CNN, currently a Python/TensorFlow model, that classifies a sketch into one of a fixed set of 333 common object nouns (Quick Draw-style categories). Powers the Visitor Gallery's guess step.
 
 **Send Me a Message**:
 A private contact feature styled as a post-it note. A visitor writes a message plus their contact info; it's emailed directly to Richie with no persistent storage — not a public wall, and not visible or reactable by other visitors.

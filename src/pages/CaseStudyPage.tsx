@@ -59,6 +59,11 @@ function CaseStudy({ project }: { project: Project }) {
               <a href={project.githubUrl} target="_blank" rel="noreferrer">
                 View on GitHub <span aria-hidden="true">↗</span>
               </a>
+              {project.links?.map((link) => (
+                <a key={link.href} href={link.href} target="_blank" rel="noreferrer">
+                  {link.label} <span aria-hidden="true">↗</span>
+                </a>
+              ))}
             </p>
           </div>
           <figure className="cs-topper-asset" data-reveal>
@@ -104,6 +109,13 @@ function Block({ block }: { block: CaseStudyBlock }) {
               <li key={item}>{item}</li>
             ))}
           </ul>
+        )}
+        {block.link && (
+          <p>
+            <a href={block.link.href} target="_blank" rel="noreferrer">
+              {block.link.label} <span aria-hidden="true">↗</span>
+            </a>
+          </p>
         )}
       </div>
     );

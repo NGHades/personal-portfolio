@@ -6,7 +6,8 @@ Wiring the real `sketch-oracle` CNN into the Visitor Gallery's "Guess it!" step,
 replacing the `mockGuess()` placeholder in `DrawingCanvas.tsx`. Per
 [ADR 0001](docs/adr/0001-client-side-sketch-oracle-inference.md), inference runs
 entirely client-side via a WASM TFLite/LiteRT runtime — no server-side model
-hosting. Source model lives in the sibling `~/Projects/sketch-oracle` repo.
+hosting. Source model lives in the sibling `~/sketch-oracle` repo
+([NGHades/sketch-oracle](https://github.com/NGHades/sketch-oracle)).
 
 - [x] Locate the trained model artifacts (`sketch_oracle_quant.tflite`,
       `classes.txt`) and confirm the exact preprocessing the FastAPI server /
@@ -39,21 +40,32 @@ hosting. Source model lives in the sibling `~/Projects/sketch-oracle` repo.
       model whose input has a dynamic batch dim (`UInt8[1,28,28,1]` vs.
       expected `UInt8[-1,28,28,1]`) — the Python TFLite interpreter tolerates
       this, LiteRT Web doesn't, and there's no JS-side workaround (no
-      resize/reshape API in `@litertjs/core` 2.5.3). Patched the shipped
-      `.tflite` by stripping each tensor's `shape_signature` field (flatc +
-      the upstream `schema.fbs`), leaving only the already-concrete `shape`.
-      **`public/models/sketch-oracle/sketch_oracle_quant.tflite` is therefore
-      not byte-identical to `~/Projects/sketch-oracle/models/`'s copy** — if
-      the model is retrained/reconverted, this patch needs reapplying (or
-      fixed upstream by exporting with a fixed `batch_size=1` Keras `Input`).
+      resize/reshape API in `@litertjs/core` 2.5.3). Originally patched by
+      stripping each tensor's `shape_signature` from the shipped `.tflite`;
+      now **fixed upstream** — sketch-oracle's `quantize.py` exports with a
+      fixed `[1,28,28,1]` input, so its output ships as-is, byte-identical to
+      `~/sketch-oracle/models/`, with no patch step.
+- [x] Upgraded to the 333-category model (was 101): 717 KB quantized
+      (was 164 KB), 70.5% top-1 / 89.5% top-5 on 2,000 test drawings after
+      quantization (90.65% top-5 on validation before). To ship a retrained
+      model, run sketch-oracle's `quantize.py` and copy its
+      `models/sketch_oracle_quant.tflite` and `models/classes.txt` into
+      `public/models/sketch-oracle/` — `sketchOracle.ts` reads the class list
+      at runtime, so no code changes are needed.
+- [x] Crop, scale (longest side → 24px), and center the drawing before
+      rasterizing (`fitToInput` in `sketchOracle.ts`), matching Quick, Draw!'s
+      frame-filling bitmaps.
+- [x] Added an unlisted sketch-oracle case study (`/projects/sketch-oracle`),
+      linked from the Visitor Gallery intro.
 - [X] Manually verify in-browser (`npm run dev`): draw a few known shapes
       (star, cat, house) and confirm sensible guesses, confirm first-load
       latency is acceptable, confirm it still works after a hard refresh
       (WASM/model caching). **Needs a human in an actual browser** — not
       something this pass could verify itself.
-- [] Update `docs/adr/0001-client-side-sketch-oracle-inference.md` /
+- [x] Update `docs/adr/0001-client-side-sketch-oracle-inference.md` /
       `CONTEXT.md` if any detail (runtime choice, asset locations) drifts from
-      what's documented there.
+      what's documented there — both now reflect the 333-category, 717 KB
+      model.
 
 Out of scope for this pass (separate pipeline, see ADR 0002): submitting
 drawings to the public gallery and the flag/report action still go through a

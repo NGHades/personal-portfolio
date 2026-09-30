@@ -25,6 +25,8 @@ export type CaseStudyBlock =
       heading?: string;
       paragraphs: string[];
       list?: string[];
+      /** Shown on its own line after the paragraphs and list. */
+      link?: ExternalLink;
       /** Half-row image on one side with the text wrapping around it on desktop; above the text on phones. */
       sideImage?: CaseStudyImage & { side: "left" | "right" };
     }
@@ -39,8 +41,10 @@ export type CaseStudyImage = {
   aspectRatio?: string;
   caption?: string;
   /** Shown after the caption, e.g. crediting an asset's source. */
-  link?: { label: string; href: string };
+  link?: ExternalLink;
 };
+
+export type ExternalLink = { label: string; href: string };
 
 export type Project = {
   slug: string;
@@ -50,6 +54,8 @@ export type Project = {
   tags: string[];
   githubUrl: string;
   liveUrl?: string;
+  /** More links shown after "View on GitHub" at the top of the case study. */
+  links?: ExternalLink[];
   /** Has a case study page, but stays out of the Projects grid and "Up Next" — reached only by direct link. */
   unlisted?: boolean;
   /** 16:9 tease screenshots. The second fades in on hover. */
@@ -364,6 +370,8 @@ export const PROJECTS: Project[] = [
     githubUrl: "https://github.com/NGHades/sketch-oracle",
     // Linked from the Visitor Gallery, which it powers, rather than listed as a project.
     unlisted: true,
+    // The copy the site actually ships, so it always matches the deployed model.
+    links: [{ label: "View the 333 classes", href: "/models/sketch-oracle/classes.txt" }],
     caseStudy: {
       introduction:
         "sketch-oracle is the convolutional neural network behind the Visitor Gallery. You draw something, it turns your strokes into a 28×28 bitmap, and it guesses which of 333 everyday objects you drew. I trained it on Google's Quick, Draw! dataset, compressed it to a 717 KB file, and run it client-side, so the guess never touches a server.",
@@ -406,6 +414,7 @@ export const PROJECTS: Project[] = [
             `Google's Quick, Draw! dataset has millions of doodles people drew in under 20 seconds, across 345 categories. It's published in several formats; I used the numpy_bitmap one, where every drawing is already cropped, centered, and rasterized to a 28×28 grayscale image, with the background at 0 and the strokes near 255.`,
             `A small script (download_data.py) reads a list of category names and streams each category's .npy file from Google's public bucket, skipping any it has already downloaded and any name the bucket doesn't recognize. Keeping the category list in a plain text file made it easy to grow the vocabulary later without touching code.`,
           ],
+          link: { label: "The Quick, Draw! dataset", href: "https://quickdraw.withgoogle.com/data" },
         },
         {
           type: "text",
