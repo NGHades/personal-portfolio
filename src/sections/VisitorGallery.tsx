@@ -1,4 +1,5 @@
 import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router";
 import { DrawingCanvas } from "../components/DrawingCanvas";
 import type { VisitorCardSceneHandle } from "../components/VisitorCardScene";
 import { MOCK_VISITOR_CARDS, type VisitorCard } from "../data/visitorCards";
@@ -48,7 +49,11 @@ export default function VisitorGallery() {
       <div className="visitor-gallery-intro" data-reveal>
         <h2 className="section-heading">Visitor Gallery</h2>
         <p className="visitor-gallery-sub">
-          Draw something. A CNN I built (<code>sketch-oracle</code>) will guess what it is, and pair it
+          Draw something. A CNN I built (
+          <Link to="/projects/sketch-oracle">
+            <code>sketch-oracle</code>
+          </Link>
+          ) will guess what it is, and pair it
           with a random adjective to name your creation.
         </p>
       </div>

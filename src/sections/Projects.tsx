@@ -1,5 +1,5 @@
 import { ProjectTease } from "../components/ProjectTease";
-import { PROJECTS } from "../data/projects";
+import { LISTED_PROJECTS } from "../data/projects";
 import "./Projects.css";
 
 export default function Projects() {
@@ -9,7 +9,7 @@ export default function Projects() {
         Projects
       </h2>
       <div className="projects-grid">
-        {PROJECTS.map((project) => (
+        {LISTED_PROJECTS.map((project) => (
           <ProjectTease key={project.slug} project={project} />
         ))}
       </div>

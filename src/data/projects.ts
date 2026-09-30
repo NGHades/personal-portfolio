@@ -50,6 +50,8 @@ export type Project = {
   tags: string[];
   githubUrl: string;
   liveUrl?: string;
+  /** Has a case study page, but stays out of the Projects grid and "Up Next" — reached only by direct link. */
+  unlisted?: boolean;
   /** 16:9 tease screenshots. The second fades in on hover. */
   image?: string;
   hoverImage?: string;
@@ -355,6 +357,124 @@ export const PROJECTS: Project[] = [
     },
   },
   {
+    slug: "sketch-oracle",
+    name: "sketch-oracle",
+    pitch: "A CNN that guesses what you drew out of 333 Quick, Draw! categories, running entirely in your browser",
+    tags: ["Python", "TensorFlow", "Keras", "LiteRT", "TypeScript"],
+    githubUrl: "https://github.com/NGHades/sketch-oracle",
+    // Linked from the Visitor Gallery, which it powers, rather than listed as a project.
+    unlisted: true,
+    caseStudy: {
+      introduction:
+        "sketch-oracle is the convolutional neural network behind the Visitor Gallery. You draw something, it turns your strokes into a 28×28 bitmap, and it guesses which of 333 everyday objects you drew. I trained it on Google's Quick, Draw! dataset, compressed it to a 717 KB file, and run it client-side, so the guess never touches a server.",
+      columns: [
+        {
+          header: "Tech Stack",
+          items: [
+            "TensorFlow + Keras",
+            "NumPy + scikit-learn",
+            "TFLite dynamic-range quantization",
+            "LiteRT Web (WASM)",
+            "FastAPI (original server)",
+          ],
+        },
+        {
+          header: "What I Built",
+          items: [
+            "Quick, Draw! data pipeline",
+            "333-class CNN",
+            "Quantized 717 KB model",
+            "In-browser inference",
+            "Canvas-to-bitmap preprocessing",
+          ],
+        },
+      ],
+      heroAlt: "The Visitor Gallery canvas with a sketch and sketch-oracle's guess",
+      blocks: [
+        {
+          type: "text",
+          heading: "The idea",
+          paragraphs: [
+            `The Visitor Gallery needed a way to name each drawing. A random adjective is easy; a noun has to come from the drawing itself. That meant a classifier that could look at a rough, ten-second doodle and say "cat" or "bicycle" with reasonable confidence.`,
+            `Rather than call a hosted vision API, I wanted to build and train the model myself, end to end: from raw data to a file small enough to ship with a website. What follows is each step, in the order I took it.`,
+          ],
+        },
+        {
+          type: "text",
+          heading: "Step 1: Getting the data",
+          paragraphs: [
+            `Google's Quick, Draw! dataset has millions of doodles people drew in under 20 seconds, across 345 categories. It's published in several formats; I used the numpy_bitmap one, where every drawing is already cropped, centered, and rasterized to a 28×28 grayscale image, with the background at 0 and the strokes near 255.`,
+            `A small script (download_data.py) reads a list of category names and streams each category's .npy file from Google's public bucket, skipping any it has already downloaded and any name the bucket doesn't recognize. Keeping the category list in a plain text file made it easy to grow the vocabulary later without touching code.`,
+          ],
+        },
+        {
+          type: "text",
+          heading: "Step 2: Preparing the dataset",
+          paragraphs: [
+            `Some categories have hundreds of thousands of drawings and others far fewer, so prepare_dataset.py samples 12,000 per category to keep the classes balanced. It then does a stratified 80/10/10 split into train, validation, and test sets, so every category is represented in the same proportion in each one.`,
+            `For the final 333-category set that came to 3,196,800 training images and 399,600 each for validation and testing. At that size memory mattered: the images stay as uint8 instead of being converted to floats (four times smaller on disk and in RAM), and the per-category arrays are freed before the split makes its own copies. Normalizing to 0–1 happens inside the model instead, in a Rescaling layer, which also means whatever runs the model later can feed it raw pixel values.`,
+          ],
+        },
+        {
+          type: "text",
+          heading: "Step 3: Designing the network",
+          paragraphs: [
+            `The model is a compact CNN. Four convolution blocks with 32, 64, 128, and 256 filters each learn progressively larger patterns: stroke edges first, then corners and curves, then recognizable parts like wheels, ears, or windows. Every block uses a 3×3 convolution, batch normalization, and ReLU, and the first three end in max pooling, shrinking the image from 28×28 down to 3×3.`,
+            `Instead of flattening those feature maps into a huge dense layer, global average pooling collapses each of the 256 maps to a single number. That keeps the parameter count low. A 512-unit dense layer with 40% dropout then maps those features to a softmax over the categories. The whole network is about 690,000 parameters.`,
+          ],
+        },
+        {
+          type: "text",
+          heading: "Step 4: Training",
+          paragraphs: [
+            `Training uses Adam with batches of 256 and three callbacks doing most of the babysitting. Early stopping ends the run once validation accuracy stops improving for eight epochs and restores the best weights. A learning-rate scheduler halves the rate whenever progress stalls for three. A checkpoint saves the model every time validation accuracy hits a new best.`,
+            `The first version covered 101 categories and reached 81% validation accuracy. Growing to 333 made each epoch take about 34 minutes, and a long run getting interrupted became a real risk. So I added a resume option: it reloads the saved checkpoint, including the optimizer state and any reduced learning rate, measures its validation accuracy, and only lets the new run overwrite it with an epoch that does better. The final model came out of a 25-epoch run, finishing with the right answer in its top five guesses 90.65% of the time on the validation set.`,
+          ],
+        },
+        {
+          type: "text",
+          heading: "Step 5: Shrinking it",
+          paragraphs: [
+            `A trained Keras model is 8.4 MB, which is a lot to make every visitor download for one guess. quantize.py converts it to TensorFlow Lite with post-training dynamic-range quantization, storing the weights as 8-bit integers instead of 32-bit floats. The result is 717 KB, about 12 times smaller.`,
+            `Compression can cost accuracy, so the script checks the quantized file directly against 2,000 held-out test drawings. It gets the top guess right 70.5% of the time, and the right answer is in its top five 89.5% of the time. The top-five number is barely a point below the full-size model's 90.65%, so quantization cost almost nothing. The top-guess accuracy is lower than the 101-category version's 81%, which is expected when there are more than three times as many ways to be wrong. It was a trade I was happy to make for a much bigger vocabulary.`,
+          ],
+        },
+        {
+          type: "text",
+          heading: "Step 6: Moving it into the browser",
+          paragraphs: [
+            `sketch-oracle started with a small FastAPI server that loaded the model and answered POST requests with the top five guesses. When it came time to put it on this site, that server had nowhere to live: the portfolio's backend is Supabase, whose Edge Functions run Deno and TypeScript, not Python. Hosting the Python service separately would have meant a third always-on service for occasional requests.`,
+            `Since the model was already small, I ran it in the browser instead, with LiteRT Web, Google's WebAssembly runtime for TFLite models. The runtime files ship with the site rather than coming from a CDN, and the model is loaded once, compiled once, and cached for later guesses.`,
+            `The move surfaced one real bug. The exported model declared a flexible batch size, and the browser runtime refused a concrete one-image input against it, even though Python's interpreter had accepted it. There was no way to reshape it from the JavaScript side, so the fix went upstream: the export step now fixes the input at exactly one 28×28 image.`,
+          ],
+        },
+        {
+          type: "text",
+          heading: "Step 7: Drawing like the training data",
+          paragraphs: [
+            `The model is only as good as how closely its input matches what it was trained on, and a browser canvas looks nothing like Quick, Draw! by default. My first approach drew at display size and scaled the image down, which shrank a thin line more than tenfold until it all but vanished.`,
+            `Now the strokes are redrawn directly at 28×28, with a 2-pixel line width calibrated to the training bitmaps, white on black to match the dataset. The drawing is also cropped to its bounding box and scaled so its longest side spans 24 pixels, then centered. Quick, Draw! drawings are always frame-filling, so without this, a small sketch in the corner of the canvas would reach the model as a few stray pixels off to one side.`,
+          ],
+        },
+        {
+          type: "image",
+          align: "text",
+          alt: "A sketch on the canvas beside the 28×28 bitmap the model actually sees",
+          aspectRatio: "16 / 9",
+          caption: "PLACEHOLDER: the canvas drawing next to its 28×28 model input.",
+        },
+        {
+          type: "text",
+          heading: "Looking back",
+          paragraphs: [
+            `The biggest lesson was that the model code was the smallest part. Most of the work, and most of the bugs, lived at the edges: fitting millions of images in memory, surviving hours-long training runs, and making a browser canvas look like data from a different source.`,
+            `The model also only ever sees the finished picture. Quick, Draw! records the order and timing of every stroke, and a model that used that information could likely tell apart categories that look alike as bitmaps. That, along with data augmentation to handle messier drawings, is where I'd take it next.`,
+          ],
+        },
+      ],
+    },
+  },
+  {
     slug: "rag-for-neanderthals",
     name: "rag-for-neanderthals",
     pitch: "TODO: one-line pitch",
@@ -381,8 +501,13 @@ export function findProject(slug: string | undefined): Project | undefined {
   return PROJECTS.find((project) => project.slug === slug);
 }
 
-/** The next two projects after this one, wrapping around — for the "Up Next" teases. */
+/** The projects shown in the Projects grid and "Up Next", in order. */
+export const LISTED_PROJECTS = PROJECTS.filter((project) => !project.unlisted);
+
+/** The next two listed projects after this one, wrapping around — for the "Up Next" teases.
+ *  An unlisted project isn't in the rotation, so it starts from the first listed one. */
 export function upNext(slug: string, count = 2): Project[] {
-  const index = PROJECTS.findIndex((project) => project.slug === slug);
-  return Array.from({ length: Math.min(count, PROJECTS.length - 1) }, (_, i) => PROJECTS[(index + 1 + i) % PROJECTS.length]);
+  const index = LISTED_PROJECTS.findIndex((project) => project.slug === slug);
+  const others = index === -1 ? LISTED_PROJECTS.length : LISTED_PROJECTS.length - 1;
+  return Array.from({ length: Math.min(count, others) }, (_, i) => LISTED_PROJECTS[(index + 1 + i) % LISTED_PROJECTS.length]);
 }

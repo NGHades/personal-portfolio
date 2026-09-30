@@ -12,6 +12,10 @@ const INPUT_SIZE = 28;
 // sketch-oracle was trained on), whose strokes are consistently ~2px wide at
 // native 28x28 resolution.
 const STROKE_WIDTH_PX = 2;
+// Quick Draw drawings were cropped to their bounding box and scaled to fill the
+// frame before bitmapping, so the longest side of every sketch spans nearly the
+// whole 28px input. Leave a small margin so strokes don't clip at the edges.
+const FIT_SIZE_PX = 24;
 
 export type SketchGuess = { label: string; confidence: number };
 
@@ -37,9 +41,43 @@ function loadModel() {
  * sketch-oracle was trained on — rather than drawing at display size and
  * downscaling. Downscaling a thin display-resolution line by >10x shrinks it
  * to a sub-pixel width that all but vanishes; drawing straight at 28x28 with
- * a stroke width calibrated to the training data keeps it legible.
+ * a stroke width calibrated to the training data keeps it legible. The
+ * drawing is first cropped, scaled and centered by fitToInput.
  * Background=0, stroke≈255, matching Quick Draw's numpy_bitmap format.
  */
+/**
+ * Maps normalized canvas coordinates into 28x28 input space, cropped to the
+ * drawing's bounding box, scaled uniformly (aspect ratio kept) so its longest
+ * side spans FIT_SIZE_PX, and centered. Without this, a small sketch drawn in
+ * a corner of the canvas reaches the model as a few pixels off to one side —
+ * nothing like the frame-filling drawings it was trained on.
+ */
+function fitToInput(strokes: Stroke[]): (x: number, y: number) => [number, number] {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const stroke of strokes) {
+    for (const { x, y } of stroke) {
+      minX = Math.min(minX, x);
+      minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
+    }
+  }
+  if (minX === Infinity) return (x, y) => [x * INPUT_SIZE, y * INPUT_SIZE];
+
+  const extent = Math.max(maxX - minX, maxY - minY);
+  // A lone dot has no extent to scale; just center it.
+  const scale = extent > 0 ? FIT_SIZE_PX / extent : 1;
+  const centerX = (minX + maxX) / 2;
+  const centerY = (minY + maxY) / 2;
+  return (x, y) => [
+    INPUT_SIZE / 2 + (x - centerX) * scale,
+    INPUT_SIZE / 2 + (y - centerY) * scale,
+  ];
+}
+
 function rasterize(strokes: Stroke[]): Uint8Array<ArrayBuffer> {
   const offscreen = document.createElement("canvas");
   offscreen.width = INPUT_SIZE;
@@ -55,20 +93,21 @@ function rasterize(strokes: Stroke[]): Uint8Array<ArrayBuffer> {
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
 
+  const toInput = fitToInput(strokes);
   for (const stroke of strokes) {
     if (stroke.length === 0) continue;
     if (stroke.length === 1) {
       // A tap with no drag — draw a dot so it still shows up.
-      const { x, y } = stroke[0];
+      const [x, y] = toInput(stroke[0].x, stroke[0].y);
       ctx.beginPath();
-      ctx.arc(x * INPUT_SIZE, y * INPUT_SIZE, STROKE_WIDTH_PX / 2, 0, Math.PI * 2);
+      ctx.arc(x, y, STROKE_WIDTH_PX / 2, 0, Math.PI * 2);
       ctx.fill();
       continue;
     }
     ctx.beginPath();
-    ctx.moveTo(stroke[0].x * INPUT_SIZE, stroke[0].y * INPUT_SIZE);
+    ctx.moveTo(...toInput(stroke[0].x, stroke[0].y));
     for (let i = 1; i < stroke.length; i++) {
-      ctx.lineTo(stroke[i].x * INPUT_SIZE, stroke[i].y * INPUT_SIZE);
+      ctx.lineTo(...toInput(stroke[i].x, stroke[i].y));
     }
     ctx.stroke();
   }
