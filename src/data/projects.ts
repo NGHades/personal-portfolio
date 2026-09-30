@@ -236,21 +236,121 @@ export const PROJECTS: Project[] = [
   {
     slug: "dermcat",
     name: "DermCat",
-    pitch: "TODO: one-line pitch",
-    tags: [],
+    pitch: "A skin-tracking web app that maps blemishes onto a 3D face, with all the computer vision running in your browser",
+    tags: ["React", "TypeScript", "Three.js", "MediaPipe", "FastAPI", "PostgreSQL", "Docker"],
     githubUrl: "https://github.com/NGHades/DermCat",
     caseStudy: {
-      introduction: "TODO: Two or three sentences on what DermCat is and who it's for.",
+      introduction:
+        "DermCat scans your face through a webcam or an uploaded photo, finds blemishes, and plots them as glowing dots on a generic 3D face. Scans line up automatically, so you can see whether your skin is trending better or worse without flipping through a photo gallery or keeping up a daily selfie ritual.",
       columns: [
-        { header: "Tech Stack", items: ["TODO"] },
-        { header: "What I Built", items: ["TODO"] },
+        {
+          header: "Tech Stack",
+          items: [
+            "React 19 + TypeScript + Vite",
+            "Three.js + Tailwind CSS 4",
+            "MediaPipe FaceLandmarker",
+            "FastAPI + SQLAlchemy + Alembic",
+            "Postgres, Caddy, nginx, Docker Compose",
+            "GitHub Actions CI",
+          ],
+        },
+        {
+          header: "What I Built",
+          items: [
+            "In-browser blemish detection",
+            "Barycentric face-mesh mapping",
+            "3D dot-based skin timeline",
+            "Privacy-enforcing API",
+            "Containerized deployment with backups",
+          ],
+        },
       ],
-      heroAlt: "DermCat screenshot",
+      heroAlt: "DermCat's 3D timeline, with blemishes shown as glowing dots on a face",
       blocks: [
-        { type: "text", heading: "The idea", paragraphs: ["TODO: The problem and why you took it on."] },
-        { type: "image", align: "full", alt: "DermCat in use", aspectRatio: "16 / 9" },
-        { type: "text", heading: "Decisions", paragraphs: ["TODO: Two to four decisions, the alternatives, and the tradeoff."] },
-        { type: "text", heading: "Looking back", paragraphs: ["TODO: What you'd do differently."] },
+        {
+          type: "text",
+          heading: "The idea",
+          paragraphs: [
+            `Tracking acne over time usually means one of two things: remembering to take the same photo at the same angle every day, or scrolling through a camera roll trying to guess whether things are getting better.
+            Neither is fun, and both fall apart the first time you miss a week.`,
+            `DermCat turns each scan into structured data instead of a picture. Every blemish becomes a point on a face model, so scans taken on different days, in different lighting, and at slightly different angles can be compared directly.`,
+          ],
+        },
+        { type: "image", align: "full", alt: "The Timeline page: a dot-particle face with colored blemish dots", aspectRatio: "16 / 9", caption: "PLACEHOLDER: video of the Timeline view." },
+        {
+          type: "text",
+          heading: "What it does",
+          paragraphs: ["Scan whenever you like, and the timeline fills in on its own."],
+          list: [
+            "Capture from a live webcam preview or a photo upload",
+            "Blemishes detected in the browser and mapped onto the face",
+            "A dot-particle 3D face where color is blemish type and size is severity",
+            "A \"show previous scan\" ghost overlay for quick before-and-after comparison",
+            "Delete a single scan, or erase all your data in one click",
+            "Inline errors on failed detections, with a lighting tip after three tries",
+          ],
+        },
+        { type: "image", align: "text", alt: "The Scan page with a live webcam preview and capture button", aspectRatio: "16 / 10", caption: "PLACEHOLDER: screenshot or GIF of the Scan page." },
+        {
+          type: "text",
+          heading: "From photo to dots",
+          paragraphs: [
+            `MediaPipe's FaceLandmarker finds 468 landmarks on the face. From those I build a skin mask (the face oval minus the eyes and lips) and convert the pixels to CIELAB, where the a* channel tracks redness.`,
+            `Each pixel's redness is compared against a blurred, skin-only baseline, so a naturally rosy cheek doesn't count as a blemish but a spot that stands out from its surroundings does. Blobs that clear the threshold become detections, and the average residual becomes a 0–1 severity score.`,
+            `Each detection is then mapped to the mesh triangle that contains it and stored as barycentric coordinates: a triangle index plus three weights. That is what makes scans comparable, since a point on triangle 412 is the same spot on the forehead no matter how the photo was framed.`,
+          ],
+        },
+        { type: "image", align: "medium", alt: "The detection pipeline: photo, skin mask, redness residual, detected blobs", aspectRatio: "21 / 9", caption: "PLACEHOLDER: image or GIF of the detection steps." },
+        {
+          type: "text",
+          heading: "Privacy by contract",
+          paragraphs: [
+            `Landmarks describe the shape of a specific face, which makes them biometric data, so the rule from day one was that the server never sees any of it. Photos, video frames, and landmarks stay in the tab and are dropped once mapping finishes.`,
+            `For each blemish the server stores three things: a type, a severity score, and a barycentric position. Because the triangle refers to MediaPipe's canonical mesh, which is identical for everyone, that locates a spot on "a face", not on yours.`,
+            `I wanted this enforced rather than promised. Request schemas reject unknown fields, so an accidental image or landmarks field fails with a 422. Database check constraints bound the triangle index, the weights, and the severity. nginx caps request bodies at 64 KB so nothing image-sized reaches the backend, and the tests cover all of it.`,
+          ],
+          sideImage: { side: "right", alt: "A diagram of what stays in the browser and what is sent to the server", aspectRatio: "4 / 5", caption: "PLACEHOLDER: browser-to-server data flow diagram." },
+        },
+        {
+          type: "text",
+          heading: "No accounts",
+          paragraphs: [
+            `The first visit mints a random device key that lives in localStorage. The server keeps only its SHA-256 hash, with no name, email, password, or IP. Separate browsers get separate, isolated timelines.`,
+            `The tradeoff is that clearing site data loses the timeline. For an app whose whole pitch is not holding your personal data, I decided that was the right side to err on, and exporting the key is on the list for later.`,
+          ],
+        },
+        {
+          type: "text",
+          heading: "The 3D timeline",
+          paragraphs: [
+            `The timeline rebuilds each dot from its triangle and weights on the generic face mesh, rendered in Three.js as a cloud of particles. Dot color shows the blemish type and dot size follows severity. The ghost overlay draws the previous scan's dots translucent on top of the current one.`,
+          ],
+        },
+        {
+          type: "gallery",
+          images: [
+            { alt: "The timeline with a single scan", aspectRatio: "4 / 5", caption: "PLACEHOLDER: current scan." },
+            { alt: "The timeline with the previous scan overlaid as ghost dots", aspectRatio: "4 / 5", caption: "PLACEHOLDER: previous-scan ghost overlay." },
+          ],
+        },
+        {
+          type: "text",
+          heading: "Shipping it",
+          paragraphs: [
+            `The backend is FastAPI on SQLAlchemy 2 with Alembic migrations that run when the container starts. It uses SQLite locally and Postgres in production.`,
+            `Docker Compose runs Caddy for TLS (the webcam only works on HTTPS), nginx for the static frontend and the /api proxy, FastAPI, and Postgres, with only Caddy exposed to the internet. Profile creation is rate-limited per client IP, a backup service dumps Postgres to S3 and verifies each dump can be restored, and GitHub Actions runs the backend tests, migration checks, frontend build, and image build.`,
+          ],
+        },
+        { type: "image", align: "text", alt: "The DermCat architecture: browser, Caddy, nginx, FastAPI, Postgres", aspectRatio: "16 / 9", caption: "PLACEHOLDER: architecture diagram." },
+        {
+          type: "text",
+          heading: "Looking back",
+          paragraphs: [
+            `The detector is a classical heuristic: it fires on real blemishes, but it's sensitive to lighting and skin tone and needs more tuning against real photos. That was a deliberate v1 choice to prove the pipeline end to end before investing in data. A custom-trained model is the planned upgrade once there's a labeled dataset.`,
+            `Deciding the storage contract early, the triangle index and weights on the canonical mesh, made everything else easier. The frontend, API, database, and privacy tests all build on that one small shape.`,
+            `Still to come: trend-based glow so worsening spots burn brighter, legend pills to toggle blemish types, a multi-date scrubber, and Terraform plus automated deploys for the EC2 host.`,
+          ],
+        },
       ],
     },
   },

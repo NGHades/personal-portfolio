@@ -46,12 +46,12 @@ hosting. Source model lives in the sibling `~/Projects/sketch-oracle` repo.
       not byte-identical to `~/Projects/sketch-oracle/models/`'s copy** — if
       the model is retrained/reconverted, this patch needs reapplying (or
       fixed upstream by exporting with a fixed `batch_size=1` Keras `Input`).
-- [ ] Manually verify in-browser (`npm run dev`): draw a few known shapes
+- [X] Manually verify in-browser (`npm run dev`): draw a few known shapes
       (star, cat, house) and confirm sensible guesses, confirm first-load
       latency is acceptable, confirm it still works after a hard refresh
       (WASM/model caching). **Needs a human in an actual browser** — not
       something this pass could verify itself.
-- [ ] Update `docs/adr/0001-client-side-sketch-oracle-inference.md` /
+- [] Update `docs/adr/0001-client-side-sketch-oracle-inference.md` /
       `CONTEXT.md` if any detail (runtime choice, asset locations) drifts from
       what's documented there.
 
