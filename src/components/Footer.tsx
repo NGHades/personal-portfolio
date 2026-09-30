@@ -4,7 +4,7 @@ import "./Footer.css";
 const SOCIAL_LINKS = [
   { label: "Email", href: "mailto:richienguyen01@gmail.com" },
   { label: "GitHub", href: "https://github.com/NGHades" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/richie-nguyencs" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/richie-nguyencs/" },
 ];
 
 export function Footer() {
