@@ -14,6 +14,15 @@ import frogLocationSelection from "../assets/frog-location-selection.jpg";
 import frogInspoVideo from "../assets/frog-inspo-video.mp4";
 import frogInspo1 from "../assets/frog-inspo1.jpg";
 import frogInspo2 from "../assets/frog-inspo2.jpg";
+import dermcatMainPage from "../assets/Dermcat-main-page.jpg";
+import dermcatTimeline from "../assets/DermCat-timeline.mp4";
+import dermcatSpinningHead from "../assets/spinning-head.mp4";
+import dermcatAcne from "../assets/dermcat-acne.jpg";
+import dermcatScanPage from "../assets/scan-page.mp4";
+import dermcatDataFlow from "../assets/dermcat-data-flow-diagram.jpg";
+import dermcatArchitecture from "../assets/dermcat-architecture-diagram.jpg";
+import dermcatNewScan from "../assets/new-scan.jpg";
+import dermcatPreviousScan from "../assets/previous-scan.jpg";
 
 /** How wide a block sits: text column (780px), medium (1100px), full page width,
  *  or breakout (edge to edge, no gutter, square corners). */
@@ -247,6 +256,8 @@ export const PROJECTS: Project[] = [
     pitch: "A skin-tracking web app that maps blemishes onto a 3D face, with all the computer vision running in your browser",
     tags: ["React", "TypeScript", "Three.js", "MediaPipe", "FastAPI", "PostgreSQL", "Docker"],
     githubUrl: "https://github.com/NGHades/DermCat",
+    image: dermcatMainPage,
+    hoverImage: dermcatAcne,
     caseStudy: {
       introduction:
         "DermCat scans your face through a webcam or an uploaded photo, finds blemishes, and plots them as glowing dots on a generic 3D face. Scans line up automatically, so you can see whether your skin is trending better or worse without flipping through a photo gallery or keeping up a daily selfie ritual.",
@@ -273,6 +284,7 @@ export const PROJECTS: Project[] = [
           ],
         },
       ],
+      heroImage: dermcatSpinningHead,
       heroAlt: "DermCat's 3D timeline, with blemishes shown as glowing dots on a face",
       blocks: [
         {
@@ -284,7 +296,7 @@ export const PROJECTS: Project[] = [
             `DermCat turns each scan into structured data instead of a picture. Every blemish becomes a point on a face model, so scans taken on different days, in different lighting, and at slightly different angles can be compared directly.`,
           ],
         },
-        { type: "image", align: "full", alt: "The Timeline page: a dot-particle face with colored blemish dots", aspectRatio: "16 / 9", caption: "PLACEHOLDER: video of the Timeline view." },
+        { type: "image", align: "full", src: dermcatTimeline, alt: "The Timeline page: a dot-particle face with colored blemish dots" },
         {
           type: "text",
           heading: "What it does",
@@ -298,7 +310,6 @@ export const PROJECTS: Project[] = [
             "Inline errors on failed detections, with a lighting tip after three tries",
           ],
         },
-        { type: "image", align: "text", alt: "The Scan page with a live webcam preview and capture button", aspectRatio: "16 / 10", caption: "PLACEHOLDER: screenshot or GIF of the Scan page." },
         {
           type: "text",
           heading: "From photo to dots",
@@ -308,7 +319,7 @@ export const PROJECTS: Project[] = [
             `Each detection is then mapped to the mesh triangle that contains it and stored as barycentric coordinates: a triangle index plus three weights. That is what makes scans comparable, since a point on triangle 412 is the same spot on the forehead no matter how the photo was framed.`,
           ],
         },
-        { type: "image", align: "medium", alt: "The detection pipeline: photo, skin mask, redness residual, detected blobs", aspectRatio: "21 / 9", caption: "PLACEHOLDER: image or GIF of the detection steps." },
+        { type: "image", align: "medium", src: dermcatScanPage, alt: "The Scan page capturing a face and running blemish detection in the browser" },
         {
           type: "text",
           heading: "Privacy by contract",
@@ -317,7 +328,12 @@ export const PROJECTS: Project[] = [
             `For each blemish the server stores three things: a type, a severity score, and a barycentric position. Because the triangle refers to MediaPipe's canonical mesh, which is identical for everyone, that locates a spot on "a face", not on yours.`,
             `I wanted this enforced rather than promised. Request schemas reject unknown fields, so an accidental image or landmarks field fails with a 422. Database check constraints bound the triangle index, the weights, and the severity. nginx caps request bodies at 64 KB so nothing image-sized reaches the backend, and the tests cover all of it.`,
           ],
-          sideImage: { side: "right", alt: "A diagram of what stays in the browser and what is sent to the server", aspectRatio: "4 / 5", caption: "PLACEHOLDER: browser-to-server data flow diagram." },
+          sideImage: {
+            side: "right",
+            src: dermcatDataFlow,
+            alt: "A diagram of what stays in the browser and what is sent to the server",
+            caption: "Photos and detection stay on your device; only blemish summaries reach the server.",
+          },
         },
         {
           type: "text",
@@ -337,8 +353,8 @@ export const PROJECTS: Project[] = [
         {
           type: "gallery",
           images: [
-            { alt: "The timeline with a single scan", aspectRatio: "4 / 5", caption: "PLACEHOLDER: current scan." },
-            { alt: "The timeline with the previous scan overlaid as ghost dots", aspectRatio: "4 / 5", caption: "PLACEHOLDER: previous-scan ghost overlay." },
+            { src: dermcatPreviousScan, alt: "The timeline with a single scan", caption: "A single scan on the timeline." },
+            { src: dermcatNewScan, alt: "The timeline with the previous scan overlaid as ghost dots", caption: "A new scan, with the previous one drawn as dimmer ghost dots." },
           ],
         },
         {
@@ -349,7 +365,7 @@ export const PROJECTS: Project[] = [
             `Docker Compose runs Caddy for TLS (the webcam only works on HTTPS), nginx for the static frontend and the /api proxy, FastAPI, and Postgres, with only Caddy exposed to the internet. Profile creation is rate-limited per client IP, a backup service dumps Postgres to S3 and verifies each dump can be restored, and GitHub Actions runs the backend tests, migration checks, frontend build, and image build.`,
           ],
         },
-        { type: "image", align: "text", alt: "The DermCat architecture: browser, Caddy, nginx, FastAPI, Postgres", aspectRatio: "16 / 9", caption: "PLACEHOLDER: architecture diagram." },
+        { type: "image", align: "text", src: dermcatArchitecture, alt: "The DermCat architecture: browser, Caddy, nginx, FastAPI, Postgres" },
         {
           type: "text",
           heading: "Looking back",
