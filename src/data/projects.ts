@@ -17,6 +17,9 @@ import frogInspo2 from "../assets/frog-inspo2.jpg";
 import dermcatMainPage from "../assets/Dermcat-main-page.jpg";
 import dermcatTimeline from "../assets/DermCat-timeline.mp4";
 import dermcatSpinningHead from "../assets/spinning-head.mp4";
+import wftMainPage from "../assets/wft-main-page.jpg";
+import sketchOracleNormalSketch from "../assets/normal-sketch.jpg";
+import sketchOracleModelInput from "../assets/model-input-28x28.png";
 import dermcatAcne from "../assets/dermcat-acne.jpg";
 import dermcatScanPage from "../assets/scan-page.mp4";
 import dermcatDataFlow from "../assets/dermcat-data-flow-diagram.jpg";
@@ -75,6 +78,8 @@ export type Project = {
     /** The two columns under the introduction, like Upstatement's "What We Did / What We Made". */
     columns: { header: string; items: string[] }[];
     heroImage?: string;
+    /** An interactive demo shown in the hero's place, instead of heroImage. */
+    heroDemo?: "sketch-oracle";
     heroAlt: string;
     blocks: CaseStudyBlock[];
   };
@@ -413,7 +418,8 @@ export const PROJECTS: Project[] = [
           ],
         },
       ],
-      heroAlt: "The Visitor Gallery canvas with a sketch and sketch-oracle's guess",
+      heroDemo: "sketch-oracle",
+      heroAlt: "A drawing canvas that shows sketch-oracle's top five guesses as you draw",
       blocks: [
         {
           type: "text",
@@ -482,11 +488,21 @@ export const PROJECTS: Project[] = [
           ],
         },
         {
-          type: "image",
-          align: "text",
-          alt: "A sketch on the canvas beside the 28×28 bitmap the model actually sees",
-          aspectRatio: "16 / 9",
-          caption: "PLACEHOLDER: the canvas drawing next to its 28×28 model input.",
+          type: "gallery",
+          images: [
+            {
+              src: sketchOracleNormalSketch,
+              aspectRatio: "901 / 468",
+              alt: "A star drawn on the canvas, with sketch-oracle guessing Star at 98.1%",
+              caption: "What you draw: a star, guessed at 98.1%.",
+            },
+            {
+              src: sketchOracleModelInput,
+              aspectRatio: "1 / 1",
+              alt: "The same star as the 28×28 white-on-black bitmap the model receives, scaled up",
+              caption: "What the model sees: the same star, cropped, centered, and redrawn at 28×28.",
+            },
+          ],
         },
         {
           type: "text",
@@ -502,21 +518,30 @@ export const PROJECTS: Project[] = [
   {
     slug: "rag-for-neanderthals",
     name: "rag-for-neanderthals",
-    pitch: "TODO: one-line pitch",
-    tags: [],
+    pitch: "A chatbot that answers anything correctly, but only in one-syllable words",
+    tags: ["React", "TypeScript", "FastAPI", "PostgreSQL", "pgvector", "Gemini"],
     githubUrl: "https://github.com/NGHades/rag-for-neanderthals",
+    image: wftMainPage,
     caseStudy: {
-      introduction: "TODO: Two or three sentences on what rag-for-neanderthals is and who it's for.",
+      introduction:
+        "Loosely based on the card game Poetry for Neanderthals: ask it anything, and it gives a correct answer in one-syllable words. The answers come from a real retrieval pipeline over Simple English Wikipedia, not a bare LLM wrapper. This project is still a work in progress.",
       columns: [
-        { header: "Tech Stack", items: ["TODO"] },
-        { header: "What I Built", items: ["TODO"] },
+        { header: "Tech Stack", items: ["React + TypeScript + Vite", "FastAPI", "Postgres + pgvector", "sentence-transformers", "Gemini"] },
+        { header: "What I Built", items: ["Simple English Wikipedia ingestion", "Retrieval-augmented answers", "Multi-turn query rewriting", "Caveman-themed chat UI"] },
       ],
-      heroAlt: "rag-for-neanderthals screenshot",
+      heroImage: wftMainPage,
+      heroAlt: "The Wiki for Neanderthals home screen: a caveman mascot, a Start Talking button, and a chat bar",
       blocks: [
-        { type: "text", heading: "The idea", paragraphs: ["TODO: The problem and why you took it on."] },
-        { type: "image", align: "full", alt: "rag-for-neanderthals in use", aspectRatio: "16 / 9" },
-        { type: "text", heading: "Decisions", paragraphs: ["TODO: Two to four decisions, the alternatives, and the tradeoff."] },
-        { type: "text", heading: "Looking back", paragraphs: ["TODO: What you'd do differently."] },
+        {
+          type: "text",
+          heading: "The idea",
+          paragraphs: [
+            `Big questions, small words. Every answer is grounded in Wikipedia, then filtered so each word is one syllable (proper nouns and units excepted) and delivered in a short caveman voice.`,
+          ],
+        },
+        { type: "text", heading: "How it works", paragraphs: ["Work in progress."] },
+        { type: "text", heading: "Decisions", paragraphs: ["Work in progress."] },
+        { type: "text", heading: "Looking back", paragraphs: ["Work in progress."] },
       ],
     },
   },

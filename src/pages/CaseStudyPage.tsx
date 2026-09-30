@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, type CSSProperties } from "react";
 import { useParams } from "react-router";
 import { ImagePlaceholder } from "../components/ImagePlaceholder";
 import { LazyImage } from "../components/LazyImage";
 import { LazyVideo } from "../components/LazyVideo";
 import { ProjectTease } from "../components/ProjectTease";
+import { SketchOracleDemo } from "../components/SketchOracleDemo";
 import { findProject, upNext, type CaseStudyBlock, type CaseStudyImage, type Project } from "../data/projects";
 import { useScrollReveal } from "../hooks/useScrollReveal";
 import NotFoundPage from "./NotFoundPage";
@@ -66,8 +67,12 @@ function CaseStudy({ project }: { project: Project }) {
               ))}
             </p>
           </div>
-          <figure className="cs-topper-asset" data-reveal>
-            <Frame src={caseStudy.heroImage} alt={caseStudy.heroAlt} aspectRatio="4 / 3" />
+          <figure className={`cs-topper-asset${caseStudy.heroDemo ? " cs-topper-asset--demo" : ""}`} data-reveal>
+            {caseStudy.heroDemo === "sketch-oracle" ? (
+              <SketchOracleDemo />
+            ) : (
+              <Frame src={caseStudy.heroImage} alt={caseStudy.heroAlt} aspectRatio="4 / 3" />
+            )}
           </figure>
         </div>
       </header>
@@ -122,8 +127,17 @@ function Block({ block }: { block: CaseStudyBlock }) {
   }
 
   if (block.type === "gallery") {
+    // When every image gives its aspect ratio, columns are sized in proportion to it
+    // so the row shares one height instead of one width.
+    const ratios = block.images.map((image) => image.aspectRatio && aspectRatioValue(image.aspectRatio));
+    const columns =
+      ratios.length > 1 && ratios.every(Boolean) ? ratios.map((ratio) => `minmax(0, ${ratio}fr)`).join(" ") : undefined;
     return (
-      <div className="cs-block cs-block--gallery" data-reveal>
+      <div
+        className="cs-block cs-block--gallery"
+        style={columns ? ({ "--gallery-columns": columns } as CSSProperties) : undefined}
+        data-reveal
+      >
         {block.images.map((image, index) => (
           <Figure key={index} image={image} />
         ))}
@@ -153,6 +167,12 @@ function Figure({ image, className, reveal }: { image: CaseStudyImage; className
       )}
     </figure>
   );
+}
+
+/** "16 / 9" -> 1.777… */
+function aspectRatioValue(aspectRatio: string): number {
+  const [width, height = "1"] = aspectRatio.split("/");
+  return Number(width) / Number(height);
 }
 
 /** Asset URLs ending in a video extension play as a looping video instead of an image. */

@@ -1,0 +1,103 @@
+/* Canvas and results side by side, wrapping to a stack when the hero column is narrow. */
+.oracle-demo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.oracle-demo-canvas {
+  flex: 1 1 260px;
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 1;
+  height: auto;
+}
+
+.oracle-demo-panel {
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.oracle-demo-label {
+  font-size: var(--fs-small);
+  font-weight: var(--weight-label);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.oracle-demo-hint {
+  color: var(--color-text-muted);
+}
+
+.oracle-demo-guesses {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Each guess pops in, staggered by rank. Keyed by label, so a class that stays in
+   the top five just slides its bar instead of popping again. */
+@keyframes oracle-guess-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.oracle-demo-guess {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 12px;
+  animation: oracle-guess-pop 350ms var(--ease-out-expo) var(--delay, 0ms) both;
+}
+
+.oracle-demo-guess-label {
+  text-transform: capitalize;
+}
+
+.oracle-demo-guess-percent {
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  color: var(--color-text-muted);
+}
+
+.oracle-demo-guess-bar {
+  grid-column: 1 / -1;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-elevated);
+  overflow: hidden;
+}
+
+.oracle-demo-guess-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--color-text);
+  transition: width 400ms var(--ease-out);
+}
+
+.oracle-demo-clear {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oracle-demo-guess {
+    animation: none;
+  }
+
+  .oracle-demo-guess-bar > span {
+    transition: none;
+  }
+}

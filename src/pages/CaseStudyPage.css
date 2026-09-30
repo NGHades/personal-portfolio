@@ -14,6 +14,8 @@
 }
 
 .cs-topper-inner {
+  /* Shared with the demo hero, which lines up with the row under the title. */
+  --cs-title-size: clamp(38px, calc(19.05px + 3.16vw), 68px);
   position: relative;
   max-width: 1500px;
   margin: 0 auto;
@@ -24,7 +26,7 @@
 }
 
 .cs-topper-title {
-  font-size: clamp(38px, calc(19.05px + 3.16vw), 68px);
+  font-size: var(--cs-title-size);
   line-height: 1.05;
   margin-bottom: 30px;
   text-wrap: balance;
@@ -135,6 +137,13 @@
     width: 50%;
     max-width: 760px;
     margin: 0;
+  }
+
+  /* A demo hero starts level with the pitch instead of pinning to the bottom:
+     one line of title (1.05 line-height) plus its margin below. */
+  .cs-topper-asset--demo {
+    top: calc(var(--cs-title-size) * 1.05 + 60px);
+    bottom: auto;
   }
 }
 
@@ -299,8 +308,9 @@
     padding-top: 100px;
   }
 
+  /* --gallery-columns is set when a gallery's images share a height (see CaseStudyPage.tsx). */
   .cs-block--gallery {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: var(--gallery-columns, repeat(2, minmax(0, 1fr)));
   }
 
   /* Same half-row size as a gallery image; the text wraps on the other side. */
