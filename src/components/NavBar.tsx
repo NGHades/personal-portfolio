@@ -80,7 +80,7 @@ export function NavBar() {
       {/* Resume has no section of its own — this downloads the PDF directly.
           TODO: drop the real file at public/resume.pdf; the link works as-is once it's there. */}
       <li>
-        <a className="navbar-link" href="/resume.pdf" download onClick={onNavigate}>
+        <a className="navbar-link" href="/Richie-Nguyen_Resume.pdf" download onClick={onNavigate}>
           Resume
           <span aria-hidden="true"> ↓</span>
         </a>
