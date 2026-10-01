@@ -15,7 +15,7 @@ const GREETINGS = [
 ];
 
 const TYPE_MS = 110;
-const DELETE_MS = 60;
+const DELETE_MS = 110;
 const HOLD_MS = 900;
 const GAP_MS = 250;
 
