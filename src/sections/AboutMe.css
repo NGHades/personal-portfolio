@@ -25,6 +25,35 @@
   margin-bottom: 12px;
 }
 
+/* Blinking caret while typing; fades out once the final "Hi" has landed. */
+.about-me-caret {
+  display: inline-block;
+  width: 2px;
+  height: 0.85em;
+  margin-left: 2px;
+  vertical-align: -0.05em;
+  background: currentColor;
+  animation: about-me-blink 1s steps(1) infinite;
+}
+
+.about-me-caret.is-done {
+  animation: none;
+  opacity: 0;
+  transition: opacity 400ms ease 600ms;
+}
+
+@keyframes about-me-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-me-caret {
+    display: none;
+  }
+}
+
 .about-me-statement {
   font-family: var(--font-display);
   font-weight: var(--font);
