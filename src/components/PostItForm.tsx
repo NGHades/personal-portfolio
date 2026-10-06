@@ -1,15 +1,27 @@
+import { FunctionsHttpError } from "@supabase/supabase-js";
 import { useRef, useState, type FormEvent } from "react";
+import { supabase } from "../lib/supabase";
 import "./PostItForm.css";
 
-// TODO: wire this up to the Supabase Edge Function that emails Richie (see docs/adr/0002).
+/** Goes through the send-message Edge Function, which emails Richie and rate-limits (docs/adr/0002). */
 async function sendMessage(message: string, contact: string): Promise<void> {
-  console.log("TODO: send via Supabase Edge Function", { message, contact });
-  await new Promise((resolve) => setTimeout(resolve, 400));
+  const { error } = await supabase.functions.invoke("send-message", {
+    body: { message, contact },
+  });
+  if (!error) return;
+
+  // The function answers 4xx with { error: "..." } meant for the visitor, e.g. the cooldown.
+  if (error instanceof FunctionsHttpError) {
+    const body = await error.context.json().catch(() => null);
+    if (typeof body?.error === "string") throw new Error(body.error);
+  }
+  throw error;
 }
 
 type FieldErrors = {
   message?: string;
   contact?: string;
+  send?: string;
 };
 
 export function PostItForm() {
@@ -36,7 +48,18 @@ export function PostItForm() {
     }
 
     setStatus("sending");
-    await sendMessage(message.trim(), contact.trim());
+    try {
+      await sendMessage(message.trim(), contact.trim());
+    } catch (err) {
+      console.error(err);
+      setStatus("idle");
+      setErrors({
+        send: err instanceof Error && !(err instanceof FunctionsHttpError)
+          ? err.message
+          : "Couldn't send that — try again in a moment.",
+      });
+      return;
+    }
     setStatus("sent");
     setMessage("");
     setContact("");
@@ -83,6 +106,11 @@ export function PostItForm() {
       {errors.contact && (
         <p className="postit-error" id="postit-contact-error" role="alert">
           {errors.contact}
+        </p>
+      )}
+      {errors.send && (
+        <p className="postit-error" role="alert">
+          {errors.send}
         </p>
       )}
       <div className="postit-footer">
